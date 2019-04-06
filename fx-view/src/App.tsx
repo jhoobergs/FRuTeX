@@ -16,4 +16,5 @@ class WrappedApp extends React.Component {
     )
   }
 }
+console.log('At my table')
 export default WrappedApp

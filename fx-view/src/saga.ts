@@ -2,12 +2,15 @@ import { CELLS_FETCH, NEWS_RECEIVED} from './actions'
 
 import { put, takeLatest, all } from 'redux-saga/effects';
 
-function* fetchNews() {
+async function* fetchNews() {
 
-  const json = yield fetch("http://localhost:8000/data.json")
-        .then(response => response.json(), );    
+  console.log('Fetchnews in saga')
 
-  yield put({ type: NEWS_RECEIVED, json: json.articles, });
+  const json = await fetch("http://localhost:8000/data.json")
+        .then(response => {console.log(response); return response.json() });    
+
+  console.log(json)
+  yield put({ type: NEWS_RECEIVED, cells: json.cells });
 }
 
 function* actionWatcher() {

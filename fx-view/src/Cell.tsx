@@ -9,7 +9,7 @@ var bgColor = { Default: "#81b71a",
                     Yellow: "#F6BB42",
 };
 
-class Cell extends React.Component<{value: string, color: string}, { value: string, color: string }>  {
+class Cell extends React.Component<{key: string, value: string, color: string}, {value: string, color: string }>  {
     constructor(props: any) {
       super(props);
       this.state = {
@@ -35,9 +35,9 @@ class Cell extends React.Component<{value: string, color: string}, { value: stri
   
     render() {
       return (
-        <view>
+        <td>
             <input type="text" value={this.state.value} style={{backgroundColor: this.state.color}} onChange={(event) =>this.handleValueChange(event.target.value)} />
-        </view>
+        </td>
       );
     }
   }

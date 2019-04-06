@@ -13,5 +13,6 @@ const store = createStore(
  );
 
  sagaMiddleware.run(rootSaga);
+ console.log('saga up and running')
 
  export default store
