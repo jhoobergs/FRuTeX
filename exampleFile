@@ -1,0 +1,25 @@
+R1:100C1:20|
+R5:6
+= 5 
+R2 = if(C > 3)  # C is column of cell, R is row of cell, C1 is first column, R22 is 22th row
+				5
+		 else
+				7
+
+R3 = max(R1, R2)
+
+# Datatypes
+	number
+	functions
+	boolean
+  string (colors are strings)
+
+# Functions: 
+	boolean: and and or
+	if else
+	max(arg1, arg2, arg3, ...)
+  nthMax(n, arg1, arg2, arg3, ...)
+  min(arg1, arg2, arg3, ...)
+	nthMin(n, arg1, arg2, arg3, ...)
+  +, -, *, /, //, %, ^
+
