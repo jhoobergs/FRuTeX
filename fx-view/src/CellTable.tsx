@@ -1,8 +1,28 @@
 import React from 'react'
 import Cell from './Cell';
 import './CellTable.css';
+import { CELLS_FETCH } from './actions';
+import { connect } from 'react-redux';
 
-export default class myTable extends React.Component {
+interface StateProps {
+
+}
+
+interface DispatchProps {
+  cellsFetch: () => void
+}
+
+type Props = StateProps & DispatchProps
+
+
+interface State {
+  cells: {}
+}
+
+class MyTable extends React.PureComponent<Props, State> {
+  constructor(props: any) {
+    super(props);
+  }
 
   createTable = () => {
     let table = []
@@ -12,14 +32,13 @@ export default class myTable extends React.Component {
       let children = []
       //Inner loop to create children
       for (let j = 0; j < n; j++) {
-        children.push(<Cell value={String(j)} color="#81b71a"></Cell>)
+        children.push(<Cell value={String(i+j)} color="Cyan"></Cell>)
       }
       //Create the parent and add the children
       table.push(<tr>{children}</tr>)
     }
     return table
   }
-
 
   render() {
     return(
@@ -30,3 +49,24 @@ export default class myTable extends React.Component {
   }
 
 }
+
+
+function mapStateToProps (state: any): StateProps {
+  return {
+    ...state,
+    cells: state.cells,
+  }
+}
+
+  
+function mapDispatchToProps (dispatch: any): DispatchProps {
+  return {
+    cellsFetch () {
+      dispatch({ type: CELLS_FETCH })
+    },
+  }
+}
+
+export default connect<DispatchProps, {}>(
+  mapDispatchToProps,
+)(MyTable)

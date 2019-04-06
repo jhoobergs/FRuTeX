@@ -1,0 +1,2 @@
+export const CELLS_FETCH = 'CELLS_FETCH'
+export const NEWS_RECEIVED = 'NEWS_RECEIVED'
