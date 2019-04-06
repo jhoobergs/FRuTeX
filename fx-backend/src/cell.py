@@ -3,8 +3,8 @@ class Cell:
     def __init__(self, row, col):
         self.row = row
         self.col = col
-        self.expression = None
+        self.expressions = {}
         
-    def apply_expression(self, expression):
-        self.expression = expression
+    def apply_expression(self, attrib, expression):
+        self.expressions[attrib] = expression
         

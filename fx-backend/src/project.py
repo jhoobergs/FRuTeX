@@ -7,6 +7,7 @@ class Project:
     def __init__(self, directory='../testdir'):
         self.directory = directory
         self.files = None
+        self.cells = {}
         
     def parse(self):
         fx_files = [filename for filename in os.listdir(self.directory)
@@ -22,4 +23,7 @@ class Project:
             files.append(file)
             
         self.files = files
-            
+    
+    def generate_json(self):
+        
+        
