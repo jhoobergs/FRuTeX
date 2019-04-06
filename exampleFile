@@ -1,10 +1,11 @@
 R1:100C1:20|
 R5:6
 = 5 
-R2 = if(C > 3)  # C is column of cell, R is row of cell, C1 is first column, R22 is 22th row
-				5
-		 else
-				7
+R2 = | 
+	if(C > 3)  # C is column of cell, R is row of cell, C1 is first column, R22 is 22th row
+		5
+	else
+		7
 
 R3 = max(R1, R2)
 
