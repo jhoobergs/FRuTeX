@@ -22,7 +22,7 @@ class Cell:
         json = {}
         
         for attrib in constants.attrib_dict.values():
-            json[attrib] = FrutexParser().eval(self, attrib, None)
+            json[attrib] = str(FrutexParser().eval(self.get_expression_text(attrib, config), attrib, None))
             
         return json
         

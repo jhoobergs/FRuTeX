@@ -17,3 +17,26 @@ default_config = {
         "num_rows" : "20",
         "num_cols" : "20",
 }
+
+LETTERS           = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
+LETTERS_UND       = LETTERS + '_'
+NUMBERS           = "0123456789"
+LETTERS_NUMS_UND  = LETTERS_UND + NUMBERS
+
+OPERATOR_CHARS    = "+-*/%!=><"
+OPERATOR_DICT     = {"+":"",
+                     "-":"",
+                     "*":"*",
+                     "/":"/",
+                     "%":"",
+                     "!":"=",
+                     "=":"=",
+                     ">":"=",
+                     "<":"="}
+
+OPERATOR_ORDER    = (
+        ('*', '/', '//'),
+        ('+', '-'),
+)
+    
+    
