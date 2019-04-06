@@ -1,14 +1,10 @@
 
 class Cell:
-    def __init__(self, row, col, content=None, color=None):
+    def __init__(self, row, col):
         self.row = row
         self.col = col
-        self.content = content
-        self.color = color
+        self.expression = None
         
-    def assign_content(self, content):
-        self.content = content
-        
-    def assign_color(self, color):
-        self.color = color
+    def apply_expression(self, expression):
+        self.expression = expression
         
