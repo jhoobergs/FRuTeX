@@ -95,6 +95,7 @@ comparators = {
   "==": lambda a,b: a == b,
   "!=": lambda a,b: a != b
 }
+
 class CompareExpression(FrutexExpression):
   def __init__(self, a, comparator, b):
     self.a = a

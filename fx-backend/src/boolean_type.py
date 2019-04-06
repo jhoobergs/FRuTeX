@@ -9,5 +9,3 @@ class Boolean (Content):
 
     def __repr__(self):
         return "Boolean: " + str(self.value)
-
-        
