@@ -9,7 +9,7 @@ file_input: (_NEWLINE | stmt)*
 single_input: _NEWLINE | simple_stmt | compound_stmt _NEWLINE
 vfpdef: NAME
 
-?stmt: simple_stmt | compound_stmt
+?stmt: simple_stmt | compound_stmt | expr
 ?simple_stmt: small_stmt (";" small_stmt)* [";"] _NEWLINE
 ?small_stmt: expr_stmt
 ?expr_stmt: star_expr
@@ -37,8 +37,8 @@ star_expr: "*" expr
 !_factor_op: "+"|"-"|"~"
 !_add_op: "+"|"-"
 !_shift_op: "<<"|">>"
-!_mul_op: "*"|"@"|"/"|"%"|"//"
-!_comp_op: "<"|">"|"=="|">="|"<="|"!="|"in"|"not" "in"|"is"|"is" "not"
+!_mul_op: "*"|"/"|"%"|"//"
+!_comp_op: "<"|">"|"=="|">="|"<="|"!="
 
 ?power: atom_expr ["**" factor]
 ?atom_expr: atom_expr "(" [arguments] ")"  -> funccall

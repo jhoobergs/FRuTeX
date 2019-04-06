@@ -27,9 +27,3 @@ class Project:
     
     def generate_json(self):
         pass
-        
-
-proj = Project()
-proj.parse()
-fp = FrutexParser()
-print(fp.parse(proj.files[0].statements[1].expression.text))
