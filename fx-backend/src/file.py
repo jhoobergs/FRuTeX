@@ -5,12 +5,19 @@ from statement import Statement
 from expression import Expression
 from fx_exception import FXException
 from cell_range import CellRange
+import constants
 
 class File:
     def __init__(self, path):
         self.path = path
-        self.statements = None
-        self.attrib = os.path.basename(path)[:-3]
+        self.statements = []
+        self.attrib = None
+        
+        if 'config.fx' != os.path.basename(self.path):
+            try:
+                self.attrib = constants.attrib_dict[os.path.basename(path)[:-3]]
+            except KeyError:
+                raise FXException('Invalid file name: ' + os.path.basename(path))            
         
     @staticmethod
     def parse_cell_ranges(text):
@@ -30,7 +37,7 @@ class File:
                 
             cell_ranges.append(CellRange(matches.get('R'), matches.get('C')))
             
-            return cell_ranges
+        return cell_ranges
         
     def parse(self):
         with open(self.path, 'r') as file:
@@ -47,6 +54,10 @@ class File:
                                         Expression(match[3] or match[1])))
         
         self.statements = statements
+        
+    def apply_statements(self, cell_dict):
+        for statement in self.statements:
+            statement.apply(cell_dict)
         
         
         
