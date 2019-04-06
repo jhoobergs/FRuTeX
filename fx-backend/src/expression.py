@@ -5,3 +5,4 @@ class Expression:
         
     def __str__(self):
         return "Expression(\n" + self.text + ")"
+    
