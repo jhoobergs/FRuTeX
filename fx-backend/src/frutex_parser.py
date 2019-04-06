@@ -154,14 +154,14 @@ class Float (Content):
                 return Float(self.value ** other.value)
             
             else:
-                raise FXExpression("Can't raise a (negative) Float to the power of a " + str(type(other)))
+                raise FXException("Can't raise a (negative) Float to the power of a " + str(type(other)))
                 
         else:
             if isinstance(other, (Float, Integer)):
                 return Float(self.value ** other.value)
             
             else:
-                raise FXExpression("Can't raise a Float to the power of a " + str(type(other)))
+                raise FXException("Can't raise a Float to the power of a " + str(type(other)))
             
     def __repr__(self):
         return "Float(" + str(self.value) + ')'
@@ -280,7 +280,7 @@ class Integer (Content):
                 return Float(self.value ** other.value)
             
             else:
-                raise FXExpression("Can't raise a (negative) Integer to the power of a " + str(type(other)))
+                raise FXException("Can't raise a (negative) Integer to the power of a " + str(type(other)))
                 
         else:
             if isinstance(other, Float):
@@ -290,7 +290,7 @@ class Integer (Content):
                 return Integer(self.value ** other.value)
             
             else:
-                raise FXExpression("Can't raise a Integer to the power of a " + str(type(other)))
+                raise FXException("Can't raise a Integer to the power of a " + str(type(other)))
                 
     def __repr__(self):
         return "Integer(" + str(self.value) + ')'
@@ -306,7 +306,7 @@ class FrutexParser():
     return self.parser.parse(replaced)
   
   def eval(self, cell, attrib, cell_dict):
-    parsed_expression = self.parse(cell.expressions[attrib])
+    parsed_expression = self.parse(cell.expressions[attrib].text)
     repr = tree_to_repr(parsed_expression)
     return repr.eval()
 
@@ -334,8 +334,28 @@ class SuiteExpression(CompoundExpression):
 class IfExpression(CompoundExpression):
   def __init__(self, children):
     super().__init__(children)
+    
+  def __repr__(self):
+    return "IfExpression: " + " ".join([repr(c) for c in self.children])
   
-  def eval(self): # TODO: elifs
+  def eval_condition(self, lst):
+    if not lst:
+        raise FXException("If statements need an else clause")
+      
+    if len(lst) == 1:
+      return lst[0].eval()
+      
+    else:
+      if lst[0].eval().is_true():
+          return lst[1].eval()
+      else:
+          return self.eval_condition(lst[2:])
+      
+
+  def eval(self):
+    return self.eval_condition(self.children)
+      
+      
     conditionEval = self.children[0].eval()
     if(conditionEval.is_true()):
       return self.children[1].eval()
