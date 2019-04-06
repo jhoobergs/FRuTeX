@@ -3,11 +3,8 @@ import json
 
 from fx_exception import FXException
 from file import File
-<<<<<<< HEAD
 from frutex_parser import FrutexParser
-=======
 from config import Config
->>>>>>> ac51bd20498c52ba03899b57c7c4c7b528624a27
 
 class Project:
     def __init__(self, directory='../testdir'):

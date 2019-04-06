@@ -5,6 +5,7 @@ from boolean_type import *
 
 def tree_to_repr(tree):
     #print(tree)
+    
     if(tree.data == "number"):
       if(tree.children[0].type == "DEC_NUMBER"):
         return Integer(tree.children[0].value)
@@ -42,7 +43,6 @@ class FrutexParser():
   def eval(self, cell, attrib, cell_dict):
     parsed_expression = self.parse(cell.expressions[attrib])
     repr = tree_to_repr(parsed_expression)
-    print(repr)
     return repr.eval()
 
 class FrutexExpression():
@@ -57,7 +57,7 @@ class CompoundExpression(FrutexExpression):
     self.children = children
   
   def __repr__(self):
-    return "CompoundExpression: " + " ".join([c.__repr__() for c in self.children])
+    return "CompoundExpression: " + " ".join([repr(c) for c in self.children])
 
 class SuiteExpression(CompoundExpression):
   def __init__(self, children):
@@ -106,4 +106,4 @@ class CompareExpression(FrutexExpression):
     return Boolean(comparators[self.comparator](self.a, self.b))
 
   def __repr__(self):
-    return "CompareExpression: " + self.a.__repr__() + " " + self.comparator + " " + self.b.__repr__()
+    return "CompareExpression: " + repr(self.a) + " " + self.comparator + " " + repr(self.b)
