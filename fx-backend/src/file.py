@@ -1,4 +1,5 @@
 import re
+import os
 
 from statement import Statement
 from expression import Expression
@@ -9,6 +10,7 @@ class File:
     def __init__(self, path):
         self.path = path
         self.statements = None
+        self.attrib = os.path.basename(path)[:-3]
         
     @staticmethod
     def parse_cell_ranges(text):
@@ -40,11 +42,12 @@ class File:
                              re.MULTILINE)
         
         for match in matches:
-            statements.append(Statement(File.parse_cell_ranges(match[0]),
+            statements.append(Statement(self.attrib,
+                                        File.parse_cell_ranges(match[0]),
                                         Expression(match[3] or match[1])))
         
         self.statements = statements
         
-            
+        
         
         
