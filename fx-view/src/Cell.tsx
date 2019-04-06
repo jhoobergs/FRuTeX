@@ -14,10 +14,11 @@ class Cell extends React.Component<{value: string, color: string}, { value: stri
       super(props);
       this.state = {
         value: props.value,
-        color: bgColor.Default
+        color: props.color
       };
   
       this.handleValueChange = this.handleValueChange.bind(this);
+      this.handleColorChange = this.handleColorChange.bind(this);
     }
 
     handleValueChange(value: any) {
