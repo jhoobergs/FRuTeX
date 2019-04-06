@@ -12,8 +12,9 @@ c.expressions["content"] = """
   else
     7
 """
-
 assert fp.eval(c, "content", None).value == 5 
+
+
 c.expressions["content"] = """
   if (7 < 5)
     5
@@ -21,3 +22,25 @@ c.expressions["content"] = """
     7
 """
 assert fp.eval(c, "content", None).value == 7
+
+
+c.expressions["content"] = """
+  if (7 != 5)
+    4
+  else
+    5
+"""
+assert fp.eval(c, "content", None).value == 4
+
+c.expressions["content"] = """
+  if (7 != 7.0)
+    4
+  else
+    5
+"""
+assert fp.eval(c, "content", None).value == 5
+
+c.expressions["content"] = """
+  -5
+"""
+assert fp.eval(c, "content", None).value == -5
