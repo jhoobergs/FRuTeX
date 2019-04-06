@@ -1,7 +1,11 @@
 from lark import Lark, Tree
-from lark.indenter import Indenter
 from fx_exception import FXException
 from functools import reduce
+
+functions = {
+    "min": lambda args : MinExpression(args),
+    "max": lambda args: MaxExpression(args)
+}
 
 def tree_to_repr(tree):
     print(tree)
@@ -9,47 +13,33 @@ def tree_to_repr(tree):
     if type(tree) != Tree:
         return tree
 
-    if(tree.data == "number"):
-      if(tree.children[0].type == "DEC_NUMBER"):
+    if(tree.data == "integer"):
         return Integer(tree.children[0].value)
-      elif(tree.children[0].type == "FLOAT_NUMBER"):
+    elif(tree.data == "float"):
         return Float(tree.children[0].value)
     elif(tree.data == "var"):
         return VarExpression(tree.children[0].value)
-    elif(tree.data == "compound_stmt"):
-      if(tree.children[0].data == "if_stmt"):
-        return IfExpression([tree_to_repr(c) for c in tree.children[0].children])
-    elif(tree.data == "comparison"):
+    elif(tree.data == "if_exp"):
+        return IfExpression([tree_to_repr(c) for c in tree.children])
+    elif(tree.data == "comp_exp"):
         return CompareExpression(tree_to_repr(tree.children[0]), tree.children[1], tree_to_repr(tree.children[2]))
-    elif tree.data == "arith_expr":
+    elif tree.data in ["add_exp", "term_exp"] :
         return ArithExpression(list(map(tree_to_repr, tree.children)))
-    elif tree.data == "term":
-        return tree_to_repr(tree.children[0])
-    elif(tree.data == "file_input"):
-        return tree_to_repr(tree.children[0]) # TODO ? assumes only 1 main statement
-    elif(tree.data == "suite"):
-        return SuiteExpression([tree_to_repr(c) for c in tree.children])
     elif tree.data == "factor":
-        return UnaryExpression(tree.children[0], tree_to_repr(tree.children[1]))
-    elif tree.data == "power":
+        return UnaryExpression(tree.children[0].value, tree_to_repr(tree.children[1]))
+    elif tree.data == "pow_exp":
         return PowerExpression(tree_to_repr(tree.children[0]), tree_to_repr(tree.children[1]))
+    elif tree.data == "funccall":
+        return functions[tree.children[0].value](list(map(tree_to_repr, tree.children[1].children)))
 
-class FrutexIndenter(Indenter):
-    NL_type = '_NEWLINE'
-    OPEN_PAREN_types = ['LPAR', 'LSQB', 'LBRACE']
-    CLOSE_PAREN_types = ['RPAR', 'RSQB', 'RBRACE']
-    INDENT_type = '_INDENT'
-    DEDENT_type = '_DEDENT'
-    tab_len = 2
-    
-class Content:
+class ConstExpression:
     def __init__(self, value):
         self.value = value
 
     def eval(self, cell, attrib, cell_dict):
         return self
         
-class Boolean (Content):
+class Boolean (ConstExpression):
     def __init__(self, value):
         super().__init__(bool(value))
     
@@ -60,7 +50,7 @@ class Boolean (Content):
         return "Boolean: " + str(self.value)
 
 
-class Float (Content):
+class Float (ConstExpression):
     def __init__(self, value):
         super().__init__(float(value))
         
@@ -167,7 +157,7 @@ class Float (Content):
         return "Float(" + str(self.value) + ')'
 
 
-class Integer (Content):
+class Integer (ConstExpression):
     def __init__(self, value):
         super().__init__(int(value))
 
@@ -298,8 +288,46 @@ class Integer (Content):
 
 class FrutexParser():
   def __init__(self):
-    kwargs = dict(rel_to=__file__, postlex=FrutexIndenter(), start='file_input')
-    self.parser = Lark.open('../assets/frutex.lark', parser='lalr', **kwargs)
+    self.parser = Lark(r"""
+        ?expr: if_exp
+            | value
+            | comp_exp
+            | add_exp
+        ?if_exp: "if" "(" expr ")" expr ["else" expr] 
+        ?comp_exp: expr _comp_op expr
+        ?add_exp: term_exp (_add_op term_exp)*
+        ?term_exp: factor (_mult_op factor)*
+        ?factor: _factor_op factor | pow_exp
+        ?pow_exp: value ["**" factor]
+        ?value: float
+        | integer
+        | "(" expr ")"
+        | "true" -> true
+        | "false" -> false
+        | NAME "(" [arguments] ")" -> funccall
+        | NAME -> var
+        | string
+        
+        string : ESCAPED_STRING
+        integer: INT
+        float: DECIMAL
+
+        arguments: expr ("," expr)*
+
+        !_comp_op: ">"|"<"|">="|"<="|"=="|"!="
+        !_mult_op: "*"|"/"|"//"|"%"
+        !_factor_op: "+"|"-"
+        !_add_op: "+"|"-"
+        NAME: /[a-zA-Z_][\w:]*/
+
+        %import common.DECIMAL
+        %import common.INT
+        %import common.ESCAPED_STRING
+        %import common.SIGNED_NUMBER
+        %import common.WS
+        %ignore WS
+
+        """, start='expr')
 
   def parse(self, code):
     replaced = code.text.replace("\n  ", '\n')
@@ -446,22 +474,22 @@ class FuncExpression(FrutexExpression):
 
 class ArgsFuncExpression(FuncExpression):
   def __init__(self, args):
-    super()._init__(args)
+    super().__init__(args)
 
   def eval(self, cell, attrib, cell_dict): 
-    return func(self.args)
+    return self.func()(self.args)
   
-  def func():
+  def func(self):
     pass
 
-class MinExpression(FuncExpression):
+class MinExpression(ArgsFuncExpression):
   def __init__(self, args):
-    super()._init__(args)
-  def func():
+    super().__init__(args)
+  def func(self):
     return min
 
-class MaxExpression(FuncExpression):
+class MaxExpression(ArgsFuncExpression):
   def __init__(self, args):
-    super()._init__(args)
-  def func():
+    super().__init__(args)
+  def func(self):
     return max
