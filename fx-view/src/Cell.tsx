@@ -9,11 +9,11 @@ var bgColor = { Default: "#81b71a",
                     Yellow: "#F6BB42",
 };
 
-class Cell extends React.Component<{}, { value: string, color: string }>  {
+class Cell extends React.Component<{value: string, color: string}, { value: string, color: string }>  {
     constructor(props: any) {
       super(props);
       this.state = {
-        value: ' ',
+        value: props.value,
         color: bgColor.Default
       };
   

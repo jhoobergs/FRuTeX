@@ -12,7 +12,7 @@ export default class myTable extends React.Component {
       let children = []
       //Inner loop to create children
       for (let j = 0; j < n; j++) {
-        children.push(<Cell></Cell>)
+        children.push(<Cell value={String(j)} color="#81b71a"></Cell>)
       }
       //Create the parent and add the children
       table.push(<tr>{children}</tr>)
