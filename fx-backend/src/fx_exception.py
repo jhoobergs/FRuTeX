@@ -1,0 +1,3 @@
+
+class FXException (Exception):
+    pass
