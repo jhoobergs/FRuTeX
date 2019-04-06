@@ -67,6 +67,7 @@ function mapDispatchToProps (dispatch: any): DispatchProps {
   }
 }
 
-export default connect<DispatchProps, {}>(
+export default connect<StateProps, DispatchProps, {}>(
+  mapStateToProps,
   mapDispatchToProps,
 )(MyTable)
