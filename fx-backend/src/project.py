@@ -35,7 +35,15 @@ class Project:
             file.apply_statements(self.cell_dict)
     
     def generate_json(self):
-        data = {"cells": {}}
+        data = {"config": {}, "cells": {}}
+        num_of_rows = self.config.values["num_rows"]
+        num_of_cols = self.config.values["num_cols"]
+        
+        data["config"]["num_of_rows"] = num_of_rows
+        data["config"]["num_of_cols"] = num_of_cols
+        
+        data["column_width"] = {str(i): self.config.values["default_width"] for i in range(int(num_of_cols))}
+        data["row_height"] = {str(i): self.config.values["default_height"] for i in range(int(num_of_rows))}
         
         for cell in self.cell_dict.values():
             data["cells"][str(cell.row) + ', ' + str(cell.col)] = cell.to_json(self.config)
