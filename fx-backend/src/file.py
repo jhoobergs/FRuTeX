@@ -11,13 +11,13 @@ class File:
     def __init__(self, path):
         self.path = path
         self.statements = []
-        if 'config' in self.path:
-            return
+        self.attrib = None
         
-        try:
-            self.attrib = constants.attrib_dict[os.path.basename(path)[:-3]]
-        except KeyError:
-            raise FXException('Invalid file name: ' + os.path.basename(path))
+        if 'config.fx' != os.path.basename(self.path):
+            try:
+                self.attrib = constants.attrib_dict[os.path.basename(path)[:-3]]
+            except KeyError:
+                raise FXException('Invalid file name: ' + os.path.basename(path))            
         
     @staticmethod
     def parse_cell_ranges(text):
@@ -40,9 +40,6 @@ class File:
         return cell_ranges
         
     def parse(self):
-        if 'config' in self.path:
-            return
-        
         with open(self.path, 'r') as file:
             text = file.read()
             

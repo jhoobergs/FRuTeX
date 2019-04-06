@@ -8,16 +8,20 @@ from config import Config
 class Project:
     def __init__(self, directory='../testdir'):
         self.directory = directory
-        self.files = None
-        self.config = Config("", [])
+        self.files = []
+        self.config = None
         self.cell_dict = {}
 
     def parse(self):
-        fx_files = [filename for filename in os.listdir(self.directory)
-            if os.path.splitext(filename)[1] == '.fx']
-
-        if not 'config.fx' in fx_files:
+        if not 'config.fx' in os.listdir(self.directory):
             raise FXException('Every FRuTeX project needs a config file')
+        
+        fx_files = [filename for filename in os.listdir(self.directory)
+            if os.path.splitext(filename)[1] == '.fx'
+            and os.path.basename(filename) != 'config.fx']
+
+        self.config = Config(self.directory + '/config.fx')
+        self.config.parse()
     
         files = []
         for filename in fx_files:
