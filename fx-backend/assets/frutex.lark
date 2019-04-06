@@ -15,7 +15,7 @@ vfpdef: NAME
 ?expr_stmt: star_expr
 //?testlist_star_expr: (test|star_expr) ("," (test|star_expr))* [","]
 compound_stmt: if_stmt
-if_stmt: "if" " "* "(" test " "* ")" suite ("elif" " "* "(" test " "* ")" suite)* ["else" suite]
+if_stmt: "if" " "* "("* test " "* ")"* suite ("elif" " "* "("* test " "* ")"* suite)* ["else" suite]
 suite: _NEWLINE* _INDENT* expr _NEWLINE* _DEDENT*
 
 ?test: or_test ["if" or_test "else" test]
@@ -24,7 +24,7 @@ suite: _NEWLINE* _INDENT* expr _NEWLINE* _DEDENT*
 ?and_test: not_test ("and" not_test)*
 ?not_test: "not" not_test -> not
          | comparison
-?comparison: expr (_comp_op expr)*
+?comparison: expr _comp_op expr
 star_expr: "*" expr
 ?expr: xor_expr ("|" xor_expr)*
 ?xor_expr: and_expr ("^" and_expr)*
@@ -46,8 +46,8 @@ star_expr: "*" expr
 
 ?atom: NAME -> var
      | number | string+
-     | "True"    -> const_true
-     | "False"   -> const_false
+     | "true" -> const_true
+     | "false" -> const_false
 
 arguments: argvalue ("," argvalue)*  ["," [ starargs | kwargs]]
          | starargs

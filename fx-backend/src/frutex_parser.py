@@ -5,10 +5,10 @@ from functools import reduce
 
 def tree_to_repr(tree):
     print(tree)
-    
+   
     if type(tree) != Tree:
         return tree
-    
+
     if(tree.data == "number"):
       if(tree.children[0].type == "DEC_NUMBER"):
         return Integer(tree.children[0].value)
@@ -46,7 +46,7 @@ class Content:
     def __init__(self, value):
         self.value = value
 
-    def eval(self):
+    def eval(self, cell, attrib, cell_dict):
         return self
         
 class Boolean (Content):
@@ -308,10 +308,11 @@ class FrutexParser():
   def eval(self, cell, attrib, cell_dict):
     parsed_expression = self.parse(cell.expressions[attrib].text)
     repr = tree_to_repr(parsed_expression)
-    return repr.eval()
+    print(repr)
+    return repr.eval(cell, attrib, cell_dict)
 
 class FrutexExpression():
-  def eval(self):
+  def eval(self, cell, attrib, cell_dict):
     raise Exception("Eval not implemented")
   
   def __repr__(self):
@@ -328,8 +329,8 @@ class SuiteExpression(CompoundExpression):
   def __init__(self, children):
     super().__init__(children)
   
-  def eval(self):
-    return [c.eval() for c in self.children][-1]
+  def eval(self, cell, attrib, cell_dict):
+    return [c.eval(cell, attrib, cell_dict) for c in self.children][-1]
 
 class IfExpression(CompoundExpression):
   def __init__(self, children):
@@ -338,36 +339,40 @@ class IfExpression(CompoundExpression):
   def __repr__(self):
     return "IfExpression: " + " ".join([repr(c) for c in self.children])
   
-  def eval_condition(self, lst):
+  def eval_condition(self, lst, cell, attrib, cell_dict):
     if not lst:
         raise FXException("If statements need an else clause")
       
     if len(lst) == 1:
-      return lst[0].eval()
+      return lst[0].eval(cell, attrib, cell_dict)
       
     else:
-      if lst[0].eval().is_true():
-          return lst[1].eval()
+      if lst[0].eval(cell, attrib, cell_dict).is_true():
+          return lst[1].eval(cell, attrib, cell_dict)
       else:
-          return self.eval_condition(lst[2:])
-      
-
-  def eval(self):
-    return self.eval_condition(self.children)
-      
-      
-    conditionEval = self.children[0].eval()
-    if(conditionEval.is_true()):
-      return self.children[1].eval()
-    else:
-      return self.children[2].eval()
+          return self.eval_condition(lst[2:], cell, attrib, cell_dict)
+    
+  def eval(self, cell, attrib, cell_dict):
+    return self.eval_condition(self.children, cell, attrib, cell_dict)
 
 class VarExpression(FrutexExpression):
   def __init__(self, name):
     self.name = name
   
-  def eval(self): # TODO
-    pass
+  def eval(self, cell, attrib, cell_dict): # TODO
+    if(self.name == "R"):
+      return Integer(cell.row)
+    elif(self.name == "C"):
+      return Integer(cell.column)
+    else:
+      raise FXException("Unknown variable: " + self.name)
+    ranges = File.parse_cell_ranges(name)
+    if(len(ranges) > 1):
+      raise FXException("Only 1 range can be specified as variable")
+    coordinates = ranges[0].get_coordinates()
+    if(len(coordinates) != 1):
+      raise FXException("Only 1 cell can be specified as variable")
+       
   
   def __repr__(self):
     return "VarExpression: " + self.name
@@ -396,8 +401,8 @@ class CompareExpression(FrutexExpression):
     self.comparator = comparator
     self.b = b
   
-  def eval(self):
-    return comparators[self.comparator](self.a, self.b)
+  def eval(self, cell, attrib, cell_dict):
+    return comparators[self.comparator](self.a.eval(cell, attrib, cell_dict), self.b.eval(cell, attrib, cell_dict))
 
   def __repr__(self):
     return "CompareExpression: " + repr(self.a) + " " + self.comparator + " " + repr(self.b)
@@ -406,20 +411,20 @@ class ArithExpression (FrutexExpression):
   def __init__(self, children):
     self.children = children
         
-  def eval(self):
+  def eval(self, cell, attrib, cell_dict):
     head, *tail = self.children
     tail = [(tail[i], tail[i + 1]) for i in range(0, len(tail), 2)]
-    return reduce(lambda state, op_elem: operators[op_elem[0]](state, op_elem[1].eval()), tail, head.eval())
+    return reduce(lambda state, op_elem: operators[op_elem[0]](state, op_elem[1].eval(cell, attrib, cell_dict)), tail, head.eval(cell, attrib, cell_dict))
      
   def __repr__(self):
-    return "ArithExpression: " + repr(self.a) + " " + self.operator + " " + repr(self.b)
+    return "ArithExpression: " + " ".join(map(repr, self.children))
 
 class UnaryExpression (FrutexExpression):
     def __init__(self, op, elem):
         self.op = op
         self.elem = elem
         
-    def eval(self):
+    def eval(self, cell, attrib, cell_dict):
         if self.op == '-':
             return -self.elem
         elif self.op == '+':
@@ -432,5 +437,31 @@ class PowerExpression (FrutexExpression):
         self.elem1 = elem1
         self.elem2 = elem2
         
-    def eval(self):
-        return self.elem1.eval() ** self.elem2.eval()
+    def eval(self, cell, attrib, cell_dict):
+        return self.elem1.eval(cell, attrib, cell_dict) ** self.elem2.eval(cell, attrib, cell_dict)
+
+class FuncExpression(FrutexExpression):
+  def __init__(self, args):
+    self.args = args
+
+class ArgsFuncExpression(FuncExpression):
+  def __init__(self, args):
+    super()._init__(args)
+
+  def eval(self, cell, attrib, cell_dict): 
+    return func(self.args)
+  
+  def func():
+    pass
+
+class MinExpression(FuncExpression):
+  def __init__(self, args):
+    super()._init__(args)
+  def func():
+    return min
+
+class MaxExpression(FuncExpression):
+  def __init__(self, args):
+    super()._init__(args)
+  def func():
+    return max
