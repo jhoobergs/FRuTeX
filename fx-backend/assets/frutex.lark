@@ -1,76 +1,18 @@
 // FRuTex grammar for Lark
 
-// Start symbols for the grammar:
-//       single_input is a single interactive statement;
-//       file_input is a module or sequence of commands read from an input file;
-//       eval_input is the input for the eval() functions.
-// NB: compound_stmt in single_input is followed by extra NEWLINE!
-file_input: (_NEWLINE | stmt)*
-single_input: _NEWLINE | simple_stmt | compound_stmt _NEWLINE
-vfpdef: NAME
+value: float
+     | integer
+     | string
+     | "true" -> true
+     | "false" -> false
 
-?stmt: simple_stmt | compound_stmt | expr
-?simple_stmt: small_stmt (";" small_stmt)* [";"] _NEWLINE
-?small_stmt: expr_stmt
-?expr_stmt: star_expr
-//?testlist_star_expr: (test|star_expr) ("," (test|star_expr))* [","]
-compound_stmt: if_stmt
-if_stmt: "if" " "* "(" test " "* ")" suite ("elif" " "* "(" test " "* ")" suite)* ["else" suite]
-suite: _NEWLINE* _INDENT* expr _NEWLINE* _DEDENT*
+string : ESCAPED_STRING
+integer: INT
+float: DECIMAL
 
-?test: or_test ["if" or_test "else" test]
-?test_nocond: or_test
-?or_test: and_test ("or" and_test)*
-?and_test: not_test ("and" not_test)*
-?not_test: "not" not_test -> not
-         | comparison
-?comparison: expr (_comp_op expr)*
-star_expr: "*" expr
-?expr: xor_expr ("|" xor_expr)*
-?xor_expr: and_expr ("^" and_expr)*
-?and_expr: shift_expr ("&" shift_expr)*
-?shift_expr: arith_expr (_shift_op arith_expr)*
-?arith_expr: term (_add_op term)*
-?term: factor (_mul_op factor)*
-?factor: _factor_op factor | power
-
-!_factor_op: "+"|"-"|"~"
-!_add_op: "+"|"-"
-!_shift_op: "<<"|">>"
-!_mul_op: "*"|"/"|"%"|"//"
-!_comp_op: "<"|">"|"=="|">="|"<="|"!="
-
-?power: atom_expr ["**" factor]
-?atom_expr: atom_expr "(" [arguments] ")"  -> funccall
-          | atom
-
-?atom: NAME -> var
-     | number | string+
-     | "True"    -> const_true
-     | "False"   -> const_false
-
-arguments: argvalue ("," argvalue)*  ["," [ starargs | kwargs]]
-         | starargs
-         | kwargs
-
-starargs: "*" test ("," "*" test)* ("," argvalue)* ["," kwargs]
-kwargs: "**" test
-
-?argvalue: test ["=" test]
-
-number: DEC_NUMBER | FLOAT_NUMBER
-string: STRING
-// Tokens
-
-NAME: /[a-zA-Z_][\w:]*/
-COMMENT: /#[^\n]*/
-_NEWLINE: ( /\r?\n[\t ]*/ | COMMENT )+
-
-STRING : /[ubf]?r?("(?!"").*?(?<!\\)(\\\\)*?"|'(?!'').*?(?<!\\)(\\\\)*?')/i
-DEC_NUMBER: /0|[1-9]\d*/i
-FLOAT_NUMBER.2: /((\d+\.\d*|\.\d+)(e[-+]?\d+)?|\d+(e[-+]?\d+))/i
-
-%ignore /[\t \f]+/  // WS
-%ignore /\\[\t \f]*\r?\n/   // LINE_CONT
-%ignore COMMENT
-%declare _INDENT _DEDENT
+%import common.DECIMAL
+%import common.INT
+%import common.ESCAPED_STRING
+%import common.SIGNED_NUMBER
+%import common.WS
+%ignore WS

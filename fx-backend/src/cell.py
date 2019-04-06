@@ -1,4 +1,5 @@
 import constants
+from frutex_parser import FrutexParser
 
 class Cell:
     def __init__(self, row, col):
@@ -21,7 +22,7 @@ class Cell:
         json = {}
         
         for attrib in constants.attrib_dict.values():
-            json[attrib] = str(eval(self.get_expression_text(attrib, config).strip()))
+            json[attrib] = FrutexParser().eval(self, attrib, None)
             
         return json
         
