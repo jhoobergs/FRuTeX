@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { Provider } from 'react-redux'
 import './App.css';
+import MyTable from './CellTable'
 
 import store from './store'
 
@@ -10,6 +11,7 @@ class WrappedApp extends React.Component {
   render () {
     return (
       <Provider store={store}>
+        <MyTable></MyTable>
       </Provider>
     )
   }
