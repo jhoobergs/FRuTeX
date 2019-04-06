@@ -1,10 +1,13 @@
-from lark import Lark
+from lark import Lark, Tree
 from lark.indenter import Indenter
 from fx_exception import FXException
 from functools import reduce
 
 def tree_to_repr(tree):
     print(tree)
+    
+    if type(tree) != Tree:
+        return tree
     
     if(tree.data == "number"):
       if(tree.children[0].type == "DEC_NUMBER"):
@@ -19,7 +22,7 @@ def tree_to_repr(tree):
     elif(tree.data == "comparison"):
         return CompareExpression(tree_to_repr(tree.children[0]), tree.children[1], tree_to_repr(tree.children[2]))
     elif tree.data == "arith_expr":
-        return ArithExpression(tree.children)
+        return ArithExpression(list(map(tree_to_repr, tree.children)))
     elif tree.data == "term":
         return tree_to_repr(tree.children[0])
     elif(tree.data == "file_input"):
@@ -28,6 +31,8 @@ def tree_to_repr(tree):
         return SuiteExpression([tree_to_repr(c) for c in tree.children])
     elif tree.data == "factor":
         return UnaryExpression(tree.children[0], tree_to_repr(tree.children[1]))
+    elif tree.data == "power":
+        return PowerExpression(tree_to_repr(tree.children[0]), tree_to_repr(tree.children[1]))
 
 class FrutexIndenter(Indenter):
     NL_type = '_NEWLINE'
@@ -95,6 +100,9 @@ class Float (Content):
             
         return Boolean(self.value != other.value)
     
+    def __pos__(self):
+        return Float(+self.value)
+    
     def __neg__(self):
         return Float(-self.value)
     
@@ -140,6 +148,21 @@ class Float (Content):
         else:
             raise FXException("Can't calculate the modulo of a Float with a " + str(type(other)))
             
+    def __pow__(self, other):
+        if self.value < 0:
+            if isinstance(other, Integer):
+                return Float(self.value ** other.value)
+            
+            else:
+                raise FXExpression("Can't raise a (negative) Float to the power of a " + str(type(other)))
+                
+        else:
+            if isinstance(other, (Float, Integer)):
+                return Float(self.value ** other.value)
+            
+            else:
+                raise FXExpression("Can't raise a Float to the power of a " + str(type(other)))
+            
     def __repr__(self):
         return "Float(" + str(self.value) + ')'
 
@@ -184,6 +207,9 @@ class Integer (Content):
             raise FXException("Can't compare Integer to " + str(type(other)))
             
         return Boolean(self.value != other.value)
+    
+    def __pos__(self):
+        return Integer(+self.value)
     
     def __neg__(self):
         return Integer(-self.value)
@@ -247,6 +273,24 @@ class Integer (Content):
         
         else:
             raise FXException("Can't calculate the modulo of a Integer with a " + str(type(other)))
+            
+    def __pow__(self, other):
+        if self.value < 0:
+            if isinstance(other, Integer):
+                return Float(self.value ** other.value)
+            
+            else:
+                raise FXExpression("Can't raise a (negative) Integer to the power of a " + str(type(other)))
+                
+        else:
+            if isinstance(other, Float):
+                return Float(self.value ** other.value)
+            
+            elif isinstance(other, Integer):
+                return Integer(self.value ** other.value)
+            
+            else:
+                raise FXExpression("Can't raise a Integer to the power of a " + str(type(other)))
                 
     def __repr__(self):
         return "Integer(" + str(self.value) + ')'
@@ -345,7 +389,7 @@ class ArithExpression (FrutexExpression):
   def eval(self):
     head, *tail = self.children
     tail = [(tail[i], tail[i + 1]) for i in range(0, len(tail), 2)]
-    return reduce(lambda state, op_elem: operators[op_elem[0]](state, tree_to_repr(op_elem[1])), tail, tree_to_repr(head))
+    return reduce(lambda state, op_elem: operators[op_elem[0]](state, op_elem[1].eval()), tail, head.eval())
      
   def __repr__(self):
     return "ArithExpression: " + repr(self.a) + " " + self.operator + " " + repr(self.b)
@@ -358,5 +402,15 @@ class UnaryExpression (FrutexExpression):
     def eval(self):
         if self.op == '-':
             return -self.elem
+        elif self.op == '+':
+            return +self.elem
         else:
             raise FXException()
+
+class PowerExpression (FrutexExpression):
+    def __init__(self, elem1, elem2):
+        self.elem1 = elem1
+        self.elem2 = elem2
+        
+    def eval(self):
+        return self.elem1.eval() ** self.elem2.eval()

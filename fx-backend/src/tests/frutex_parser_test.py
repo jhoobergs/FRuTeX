@@ -41,6 +41,11 @@ c.expressions["content"] = """
 assert fp.eval(c, "content", None).value == 5
 
 c.expressions["content"] = """
-  -5
+  -5 ++ 4
 """
-assert fp.eval(c, "content", None).value == -5
+assert fp.eval(c, "content", None).value == -1
+
+c.expressions["content"] = """
+  3**4
+"""
+assert fp.eval(c, "content", None).value == 3**4
