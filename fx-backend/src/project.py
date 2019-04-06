@@ -2,6 +2,7 @@ import os
 
 from fx_exception import FXException
 from file import File
+from frutex_parser import FrutexParser
 
 class Project:
     def __init__(self, directory='../testdir'):
@@ -25,5 +26,10 @@ class Project:
         self.files = files
     
     def generate_json(self):
+        pass
         
-        
+
+proj = Project()
+proj.parse()
+fp = FrutexParser()
+print(fp.parse(proj.files[0].statements[1].expression.text))
