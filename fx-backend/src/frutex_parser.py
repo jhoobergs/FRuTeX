@@ -302,11 +302,11 @@ class FrutexParser():
     self.parser = Lark.open('../assets/frutex.lark', parser='lalr', **kwargs)
 
   def parse(self, code):
-    replaced = code.replace("\n  ", '\n')
+    replaced = code.text.replace("\n  ", '\n')
     return self.parser.parse(replaced)
   
   def eval(self, cell, attrib, cell_dict):
-    parsed_expression = self.parse(cell.expressions[attrib].text)
+    parsed_expression = self.parse(cell.expressions[attrib])
     repr = tree_to_repr(parsed_expression)
     print(repr)
     return repr.eval(cell, attrib, cell_dict)
