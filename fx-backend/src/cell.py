@@ -19,6 +19,18 @@ class Cell:
         self.evaluated_expressions[attrib] = None
         for c, a in self.dependent_of.get(attrib):
           c.dependents.get(a, set()).discard((self, attrib))
+          
+    def refresh(self, attrib, config, cell_dict):
+        d = {(self.row, self.col): self.to_json}
+        
+        for c, a in self.dependents.get(attrib, set()):
+            d.update(c.refresh(a, config, cell_dict))
+            
+        return d
+          
+    def amend_expression(self, attrib, expression, config, cell_dict):
+        self.apply_expression(attrib, expression)
+        return self.refresh(attrib, config, cell_dict)
         
     def get_expression_text(self, attrib, config, cell_dict):
         result = self.get_expression_result(attrib, config, cell_dict)
