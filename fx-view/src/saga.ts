@@ -12,14 +12,23 @@ const fetchDataPromise = () => {
     });
 }
 
-function* postData(payload) {
-  const postRequest = yield call(fetch, "http://localhost:8000/data", {
+const updateDataPromise = (payload: any) => () => {
+  return fetch("http://localhost:8000/update", {
     method: 'POST', headers : {
       'Accept': 'application/json',
       'Content-Type' :'application/json'
     },
-    body: payload
-  });
+    body: JSON.stringify(payload)
+  }).then(response => response.json())
+  .catch(function (err) {
+    console.log(err)
+});
+}
+
+function* postData(action: any) {
+  console.log(action.payload)
+  const json = yield call(updateDataPromise(action.payload));
+  yield put({ type: 'DATA_RECEIVED', cells: json.cells });
 }
 
 function* fetchData() {
@@ -35,7 +44,7 @@ function* actionWatcher() {
 }
 
 function* eventWatcher() {
-  yield takeLatest('UPDATE_VALUE', (action ) => postData(action.payload))
+  yield takeLatest('UPDATE_VALUE', postData)
 }
 
 export default function* rootSaga() {

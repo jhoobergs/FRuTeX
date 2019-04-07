@@ -89,6 +89,13 @@ class ApiServer(HTTPServer):
 class ApiHandler(BaseHTTPRequestHandler):
     _routes={}
 
+    def do_OPTIONS(self):
+        self.send_response(200)
+        self.send_header("Access-Control-Allow-Origin", "*")
+        self.send_header('Access-Control-Allow-Methods', 'POST, OPTIONS, GET')
+        self.send_header("Access-Control-Allow-Headers", "*")
+        self.end_headers()
+
 
     def do_GET(self):
         self.do_XXX()
@@ -128,6 +135,7 @@ class ApiHandler(BaseHTTPRequestHandler):
                     if type(response) is dict:
                         response = json.dumps(response)
                     response = bytes(str(response),"utf-8")
+                    print(response)
                     self.send_header("Content-Length", len(response))
                     self.send_header("Access-Control-Allow-Origin", "*")
                     self.end_headers()

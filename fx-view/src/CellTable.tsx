@@ -83,7 +83,7 @@ function mapDispatchToProps (dispatch: any): DispatchProps {
       dispatch({type: 'CELLS_FETCH'})
     }, updateValue(row: number, col: number, attrib: string, value: string) {
       dispatch({type: 'UPDATE_VALUE', payload: {
-        row, col, attrib, value
+        row, col, attrib, expr: value
       }})
     }
   }

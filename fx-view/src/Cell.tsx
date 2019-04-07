@@ -30,14 +30,19 @@ class Cell extends React.Component<Props, any>  {
       };
   
       this.handleValueChange = this.handleValueChange.bind(this);
+      this.handleKeyPress = this.handleKeyPress.bind(this);
       this.handleColorChange = this.handleColorChange.bind(this);
     }
 
-    handleValueChange(value: any) {
+    handleValueChange(event: any) {
         this.setState({
-            value: value
+            value: event.target.value
         });
-        this.props.updateValue("content", this.state.value);
+      }
+
+    handleKeyPress(event: any) {
+        if(event.key == "Enter")
+          this.props.updateValue("content", event.target.value);
     }
 
     handleColorChange(color: any) {
@@ -49,7 +54,7 @@ class Cell extends React.Component<Props, any>  {
     render() {
       return (
         <button>
-            <input type="text" value={this.state.value} style={{backgroundColor: this.state.color}} onChange={(event) =>this.handleValueChange(event.target.value)} />
+            <input type="text" value={this.state.value} style={{backgroundColor: this.state.color}} onChange={(event) =>this.handleValueChange(event)} onKeyPress={(event) =>this.handleKeyPress(event)} />
         </button>
       );
     }
