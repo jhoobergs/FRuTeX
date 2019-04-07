@@ -64,7 +64,7 @@ class Cell:
         json = {}
         
         for attrib in constants.cell_attrib_dict.values():
-            json[attrib] = self.get_expression_text(attrib, config, cell_dict)
+            json[attrib] = [self.get_expression_text(attrib, config, cell_dict), self.expressions.get(attrib) and self.expressions.get(attrib).text or ""]
 
         return json
         
