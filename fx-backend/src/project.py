@@ -5,6 +5,8 @@ from fx_exception import FXException
 from file import File
 from config import Config
 from expression import Expression
+from statement import Statement
+from cell_range import CellRange
 
 class Project:
     def __init__(self, directory='../testdir'):
@@ -34,7 +36,7 @@ class Project:
         self.files = files
         
         for file in self.files.values():
-            file.apply_statements(self.cell_dict)
+            file.apply_statements(self.config, self.cell_dict, None)
     
     def generate_json(self):
         data = {"config": {}, "cells": {}}
@@ -56,16 +58,19 @@ class Project:
             
         return json.dumps(data)
       
-    def compact(self):
+    def compact_all(self):
         for file in self.files.values():
-            file.compact()
+            file.write_to_file()
             
-    def update_expression(self, cell_pos, attrib, expression):
-        cell = self.cell_dict[cell_pos]
+    def update_expression(self, cell_pos, attrib, expression, save=False):
+        #cell = self.cell_dict[cell_pos]
         # TODO: make new cell if it doesn't exist
         
-        new_json = cell.update_expression(attrib, Expression(expression), self.config, self.cell_dict)
+        new_json = self.files[attrib].apply_statements(self.config, self.cell_dict, [Statement(attrib, [CellRange((cell_pos[0], cell_pos[0] + 1), (cell_pos[1], cell_pos[1] + 1))], Expression(expression))])
+        #new_json = cell.update_expression(attrib, Expression(expression), self.config, self.cell_dict)
         new_json = {str(key)[1:-1]: value for key, value in new_json.items()}
+      
+        if save: self.files[attrib].write_to_file()
       
         self.data["cells"].update(new_json)
         return json.dumps(self.data)

@@ -56,17 +56,19 @@ class File:
         
         self.statements = statements
         
-    def apply_statements(self, cell_dict):
-        for statement in self.statements:
+    def apply_statements(self, config, cell_dict, statements=None):
+        for statement in (statements, self.statements)[statements is None]:
             coordinates = [coordinates for cell_range in statement.cell_ranges for coordinates in cell_range.get_coordinates() if coordinates in self.expressions]
             for coordinate in coordinates:
                 self.expressions[cell_dict[coordinate].expressions[statement.attrib].text].discard(coordinates)
            
-            statement.apply(cell_dict)
+            result = statement.apply(config, cell_dict, statements is not None)
             
             coordinates = [coordinates for cell_range in statement.cell_ranges for coordinates in cell_range.get_coordinates()]
             for coordinate in coordinates:
                 self.expressions[cell_dict[coordinate].expressions[statement.attrib].text] = self.expressions.get(cell_dict[coordinate].expressions[statement.attrib].text, set()) | set([coordinate])
+                
+            return result
 
     def compact(self):
         exp_to_compact_ranges = {}
@@ -114,3 +116,7 @@ class File:
             code += expression + '\n'
             
         return code
+      
+    def write_to_file(self):
+        with open(self.path, 'w+') as file:
+            file.write(self.to_code())
