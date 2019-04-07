@@ -1,0 +1,4 @@
+show data
+update 3 6 content 5
+update 4 6 color if(getContent(cell(3,6)) > 4) "Blue" else "Black"
+update 3 6 content 3
