@@ -11,8 +11,8 @@ class Cell:
         self.dependent_of = {}
         
     def add_dependent(self, dep_cell, dep_attrib, this_attrib):
-        self.dependents[this_attrib] = self.dependents.get(this_attrib, set()) | set([dep_cell, dep_attrib])
-        dep_cell.dependent_of[dep_attrib] = dep_cell.dependent_of.get(dep_attrib, set()) | set([self, this_attrib])
+        self.dependents[this_attrib] = self.dependents.get(this_attrib, set()) | set([(dep_cell, dep_attrib)])
+        dep_cell.dependent_of[dep_attrib] = dep_cell.dependent_of.get(dep_attrib, set()) | set([(self, this_attrib)])
         
     def apply_expression(self, attrib, expression):
         self.expressions[attrib] = expression
