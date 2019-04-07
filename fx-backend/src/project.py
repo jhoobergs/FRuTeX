@@ -62,6 +62,10 @@ class Project:
             
     def update_expression(self, cell_pos, attrib, expression):
         cell = self.cell_dict[cell_pos]
+        # TODO: make new cell if it doesn't exist
+        
+        new_json = cell.update_expression(attrib, Expression(expression), self.config, self.cell_dict)
+        new_json = {str(key)[1:-1]: value for key, value in new_json.items()}
       
-        self.data["cells"].update(cell.update_expression(attrib, Expression(expression), self.config, self.cell_dict))
+        self.data["cells"].update(new_json)
         return json.dumps(self.data)

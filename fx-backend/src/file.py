@@ -109,4 +109,6 @@ class File:
                 code += cell_range.to_code() + ',\n'
             code += cell_ranges[-1].to_code() + '= '
             
+            code += expression.text + '\n'
             
+        return code
