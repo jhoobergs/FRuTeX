@@ -1,4 +1,4 @@
-import { CELLS_FETCH, NEWS_RECEIVED} from './actions'
+import { CELLS_FETCH, DATA_RECEIVED} from './actions'
 
 export const initialState: any = {
   loading: true,
@@ -8,14 +8,14 @@ export const initialState: any = {
 export default function reducer (state: any = initialState, action: any): any {
   console.log("I am at the reducer.")
   switch (action.type) {
-    case CELLS_FETCH:
+    case 'CELLS_FETCH':
       console.log('I am at Cells_fetch')
       return {
         ...state,
         loading: true
       }
-    case NEWS_RECEIVED:
-      console.log('I am at News_Received')
+    case 'DATA_RECEIVED':
+      console.log('I am at Data_Received')
       return {
         ...state, cells: action.cells, loading: false
       }

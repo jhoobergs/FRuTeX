@@ -1,6 +1,6 @@
 export const CELLS_FETCH = () => ({
     type: 'CELLS_FETCH',
 });
-export const NEWS_RECEIVED = () => ({
-    type: 'NEWS_RECEIVED',
+export const DATA_RECEIVED = () => ({
+    type: 'DATA_RECEIVED',
 });

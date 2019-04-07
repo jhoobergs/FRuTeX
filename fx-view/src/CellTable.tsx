@@ -1,17 +1,9 @@
 import React from 'react'
-import Cell from './Cell';
+import Cell, { bgColor } from './Cell';
 import './CellTable.css';
 import { CELLS_FETCH } from './actions';
 import { connect } from 'react-redux';
 import { watchFile } from 'fs';
-
-function isEmpty(obj: any) {
-  for(var key in obj) {
-      if(obj.hasOwnProperty(key))
-          return false;
-  }
-  return true;
-}
 
 interface StateProps {
   cells: { [key: string]: {
@@ -35,9 +27,6 @@ interface State {
 class MyTable extends React.PureComponent<Props, State> {
   constructor(props: any) {
     super(props);
-    /*this.state = {
-      cells: this.props.cellsFetch()
-    };*/
     this.props.cellsFetch();
   }
 
@@ -50,7 +39,7 @@ class MyTable extends React.PureComponent<Props, State> {
       let children = []
       //Inner loop to create children
       for (let j = 0; j < n; j++) {
-        children.push(<Cell key ={k.toString()} value={this.props.cells[`${i},${j}`].content} color={this.props.cells[`${i},${j}`].color}></Cell>)
+        children.push(<Cell key ={k.toString()} value={(this.props.cells[`${i}, ${j}`] || {content:""}).content} color={(this.props.cells[`${i}, ${j}`] || {color: bgColor.Default}).color}></Cell>)
         k += 1
       }
       //Create the parent and add the children
@@ -60,16 +49,17 @@ class MyTable extends React.PureComponent<Props, State> {
   }
 
   render() {
+    let content = <h1>Loading</h1>
+    if(! this.props.loading){
+      content = <table>
+      <tbody>
+      {this.createTable()}
+      </tbody>
+    </table>
+    }
+
     return(<div>
-      if (this.props.loading) {
-        <h1>Loading</h1>
-      } else {
-      <table>
-        <tbody>
-        {this.createTable()}
-        </tbody>
-      </table>
-      }
+        {content}
       </div>
     );
   }
@@ -78,7 +68,7 @@ class MyTable extends React.PureComponent<Props, State> {
 
 function mapStateToProps (state: any): StateProps {
   console.log('here')
-  console.log(state.cells)
+  console.log(JSON.stringify(state.cells))
   return {
     cells: state.cells,
     loading: state.loading
@@ -89,7 +79,8 @@ function mapStateToProps (state: any): StateProps {
 function mapDispatchToProps (dispatch: any): DispatchProps {
   return {
     cellsFetch () {
-      dispatch({ type: CELLS_FETCH })
+      console.log('Dispatching')
+      dispatch({type: 'CELLS_FETCH'})
     },
   }
 }

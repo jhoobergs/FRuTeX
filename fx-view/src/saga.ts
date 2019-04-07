@@ -1,20 +1,25 @@
-import { CELLS_FETCH, NEWS_RECEIVED} from './actions'
+import { CELLS_FETCH, DATA_RECEIVED} from './actions'
 
-import { put, takeLatest, all } from 'redux-saga/effects';
+import { call, put, takeLatest, all, cancel, take } from 'redux-saga/effects';
 
-async function* fetchNews() {
+const fetchDataPromise = () => {
+  return fetch("http://localhost:8000/data.json")
+      .then(response => response.json())
+      .catch(function (err) {
+        console.log(err)
+    });
+}
 
-  console.log('Fetchnews in saga')
+function* fetchData() {
+  console.log('Fetchdata in saga')
+  const json = yield call(fetchDataPromise);
 
-  const json = await fetch("http://localhost:8000/data.json")
-        .then(response => {console.log(response); return response.json() });    
-
-  console.log(json)
-  yield put({ type: NEWS_RECEIVED, cells: json.cells });
+  console.log(`Data: ${JSON.stringify(json)}`)
+  yield put({ type: 'DATA_RECEIVED', cells: json.cells });
 }
 
 function* actionWatcher() {
-     yield takeLatest(CELLS_FETCH, fetchNews)
+     yield takeLatest('CELLS_FETCH', fetchData)
 }
 
 export default function* rootSaga() {
