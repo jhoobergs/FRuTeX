@@ -10,6 +10,7 @@ class Project:
         self.directory = directory
         self.files = {}
         self.config = None
+        self.data = None
         self.cell_dict = {}
 
     def parse(self):
@@ -50,8 +51,14 @@ class Project:
         for cell in self.cell_dict.values():
             data["cells"][str(cell.row) + ', ' + str(cell.col)] = cell.to_json(self.config, self.cell_dict)
             
+        self.data = data
+            
         return json.dumps(data)
       
     def compact(self):
         for file in self.files.values():
             file.compact()
+            
+    def amend_expression(self, cell, attrib, expression):
+        self.data["cells"].update(cell.amend_expression(attrib, expression, self.config, self.cell_dict))
+        return json.dumps(self.data)

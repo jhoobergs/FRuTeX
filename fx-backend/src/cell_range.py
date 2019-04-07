@@ -26,3 +26,8 @@ class CellRange:
 
     def size(self):
         return (self.cols[1] - self.cols[0]) * (self.rows[1] - self.rows[0])
+      
+    def to_code(self):
+        return 'R' + str(self.rows[0]) + (':' + str(self.rows[1])) * (self.rows[1] > self.rows[0] + 1) + ' ' + \
+               'C' + str(self.cols[0]) + (':' + str(self.cols[1])) * (self.cols[1] > self.cols[0] + 1)
+      
