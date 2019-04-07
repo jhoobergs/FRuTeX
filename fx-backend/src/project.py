@@ -38,9 +38,11 @@ class Project:
         data = {"config": {}, "cells": {}}
         num_of_rows = self.config.values["num_rows"]
         num_of_cols = self.config.values["num_cols"]
+        default_color = self.config.values["default_color"]
         
         data["config"]["num_of_rows"] = num_of_rows
         data["config"]["num_of_cols"] = num_of_cols
+        data["config"]["default_color"] = default_color
         
         data["column_width"] = {str(i): self.config.values["default_width"] for i in range(int(num_of_cols))}
         data["row_height"] = {str(i): self.config.values["default_height"] for i in range(int(num_of_rows))}

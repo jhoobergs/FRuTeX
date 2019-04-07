@@ -7,10 +7,18 @@ class Cell:
         self.col = col
         self.expressions = {}
         self.evaluated_expressions = {}
+        self.dependents = {}
+        self.dependent_of = {}
+        
+    def add_dependent(self, dep_cell, dep_attrib, this_attrib):
+        self.dependents[this_attrib] = self.dependents.get(this_attrib, set()) | set([dep_cell, dep_attrib])
+        dep_cell.dependent_of[dep_attrib] = dep_cell.dependent_of.get(dep_attrib, set()) | set([self, this_attrib])
         
     def apply_expression(self, attrib, expression):
         self.expressions[attrib] = expression
         self.evaluated_expressions[attrib] = None
+        for c, a in self.dependent_of.get(attrib):
+          c.dependents.get(a, set()).discard((self, attrib))
         
     def get_expression_text(self, attrib, config, cell_dict):
         result = self.get_expression_result(attrib, config, cell_dict)
