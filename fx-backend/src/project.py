@@ -77,6 +77,6 @@ class Project:
       
     def clear_cell(self, cell_pos, save=False):
         for attrib in constants.attrib_dict:
-            return_value = self.update_expression(cell_pos, attrib, None, save=save)
+            return_value = self.update_expression(cell_pos, attrib, "", save=save)
             
         return return_value
