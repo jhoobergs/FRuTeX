@@ -58,14 +58,14 @@ class File:
         
     def apply_statements(self, cell_dict):
         for statement in self.statements:
-            cells = [cell_dict[coordinates] for cell_range in statement.cell_ranges for coordinates in cell_range.get_coordinates() if coordinates in cell_dict]
-            for cell in cells:
-                self.expressions[cell.expression.text].remove(cell)
+            coordinates = [coordinates for cell_range in statement.cell_ranges for coordinates in cell_range.get_coordinates() if coordinates in self.expressions]
+            for coordinate in coordinates:
+                self.expressions[cell.expression.text].discard(coordinates)
            
             statement.apply(cell_dict)
             
-            for cell in cells:
-                self.expressions[cell.expression.text] = self.expressions.get(cell.expression.text, []) + [cell]
+            for coordinate in coordinates:
+                self.expressions[cell.expression.text] = self.expressions.get(cell.expression.text, set()) | set(coordinate)
         
     def compact(self):
       
