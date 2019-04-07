@@ -21,7 +21,7 @@ class Cell:
           c.dependents.get(a, set()).discard((self, attrib))
           
     def refresh(self, attrib, config, cell_dict):
-        d = {(self.row, self.col): self.to_json}
+        d = {(self.row, self.col): self.to_json()}
         
         for c, a in self.dependents.get(attrib, set()):
             d.update(c.refresh(a, config, cell_dict))
