@@ -43,7 +43,7 @@ class Project:
         data = {"config": {}, "cells": {}}
         num_of_rows = self.config.values["num_rows"].value
         num_of_cols = self.config.values["num_cols"].value
-        default_color = self.config.values["default_color"].value
+        default_color = '#' + hex(self.config.values["default_color"].value)[2:]
         
         data["config"]["num_of_rows"] = num_of_rows
         data["config"]["num_of_cols"] = num_of_cols

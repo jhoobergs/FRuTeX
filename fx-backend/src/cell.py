@@ -40,7 +40,11 @@ class Cell:
           return config.get_default(attrib).value
         
         else:
-          return str(result.value)
+          return_value = result.value
+          if attrib == 'color':
+              return_value = '#' + hex(return_value)[2:]
+              
+          return str(return_value)
           
     def get_expression_result(self, attrib, config, cell_dict):
         e = self.evaluated_expressions.get(attrib)
