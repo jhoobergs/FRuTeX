@@ -56,6 +56,9 @@ class Project:
         data["row_height"].update({str(i): self.cell_dict[(i, None)].get_expression_text('row_size', self.config, self.cell_dict) for i in range(int(num_of_rows)) if (i, None) in self.cell_dict})
         
         for cell in self.cell_dict.values():
+            if None in (cell.col, cell.row):
+                continue
+              
             data["cells"][str(cell.row) + ', ' + str(cell.col)] = cell.to_json(self.config, self.cell_dict)
             
         self.data = data
