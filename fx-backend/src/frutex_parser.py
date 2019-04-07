@@ -574,7 +574,7 @@ class GetColorExpression (FuncExpression):
     super().__init__(args, dependent_info)
     
   def eval(self, cell, attrib, config, cell_dict):
-    if self.args[0] is None:
+    if self.args[0].eval(cell, attrib, config, cell_dict) is None:
       return None
     
     return self.args[0].eval(cell, attrib, config, cell_dict).get_expression_result("color", config, cell_dict)
