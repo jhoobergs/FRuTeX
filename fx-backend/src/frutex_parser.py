@@ -560,7 +560,7 @@ class GetContentExpression (FuncExpression):
     
   def eval(self, cell, attrib, config, cell_dict):
     if self.args[0].eval(cell, attrib, config, cell_dict) is None:
-      return None
+      return NoneExpr()
     
     self.update_dependencies(cell, attrib, config, cell_dict)
       
@@ -575,7 +575,7 @@ class GetColorExpression (FuncExpression):
     
   def eval(self, cell, attrib, config, cell_dict):
     if self.args[0].eval(cell, attrib, config, cell_dict) is None:
-      return None
+      return NoneExpr()
     
     return self.args[0].eval(cell, attrib, config, cell_dict).get_expression_result("color", config, cell_dict)
     

@@ -1,2 +1,2 @@
-num_rows = 25
-num_cols = 15
+num_rows = 15
+num_cols = 8
