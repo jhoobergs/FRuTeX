@@ -7,6 +7,7 @@ from config import Config
 from expression import Expression
 from statement import Statement
 from cell_range import CellRange
+import constants
 
 class Project:
     def __init__(self, directory='../testdir'):
@@ -73,3 +74,9 @@ class Project:
       
         self.data["cells"].update(new_json)
         return json.dumps(self.data)
+      
+    def clear_cell(self, cell_pos, save=False):
+        for attrib in constants.attrib_dict:
+            return_value = self.update_expression(cell_pos, attrib, None, save=save)
+            
+        return return_value
