@@ -66,7 +66,7 @@ class Project:
     def update_expression(self, cell_pos, attrib, expression, save=False):
         #cell = self.cell_dict[cell_pos]
         
-        new_json = self.files[attrib].apply_statements(self.config, self.cell_dict, [Statement(attrib, [CellRange((cell_pos[0], cell_pos[0] + 1), (cell_pos[1], cell_pos[1] + 1))], expression and Expression(expression))])
+        new_json = self.files[attrib].apply_statements(self.config, self.cell_dict, [Statement(attrib, [CellRange((cell_pos[0], cell_pos[0] + 1), (cell_pos[1], cell_pos[1] + 1))], Expression(expression))])
         #new_json = cell.update_expression(attrib, Expression(expression), self.config, self.cell_dict)
         new_json = {str(key)[1:-1]: value for key, value in new_json.items()}
       
