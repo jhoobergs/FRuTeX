@@ -58,9 +58,8 @@ class MyTable extends React.PureComponent<Props, State> {
     </table>
     }
 
-    return(<div>
-        {content}
-      </div>
+    return(
+      content
     );
   }
 }
