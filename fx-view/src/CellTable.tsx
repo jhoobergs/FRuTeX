@@ -69,8 +69,10 @@ class MyTable extends React.PureComponent<Props, State> {
   }
 
   handleValueKeyPress(event: any) {
-    if(event.key == "Enter")
+    if(event.key == "Enter"){
       this.props.updateValue(this.props.selection[0], this.props.selection[1], "content", event.target.value);
+      this.props.changeContent(event.target.value)
+    }
   }
 
   handleColorChange(event: any) {
@@ -81,9 +83,12 @@ class MyTable extends React.PureComponent<Props, State> {
   }
 
   handleColorKeyPress(event: any) {
-    if(event.key == "Enter")
+    if(event.key == "Enter"){
       this.props.updateValue(this.props.selection[0], this.props.selection[1], "color", event.target.value);
-  }
+      this.props.changeColor(event.target.value)
+    }
+
+  } 
 
   render() {
     console.log(JSON.stringify(this.props.cells))
