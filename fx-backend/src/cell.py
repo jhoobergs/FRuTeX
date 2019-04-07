@@ -21,6 +21,7 @@ class Cell:
           c.dependents.get(a, set()).discard((self, attrib))
           
     def refresh(self, attrib, config, cell_dict):
+        self.evaluated_expressions[attrib] = None
         d = {(self.row, self.col): self.to_json(config, cell_dict)}
         
         for c, a in self.dependents.get(attrib, set()):
