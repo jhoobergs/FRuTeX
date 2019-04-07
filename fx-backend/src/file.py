@@ -64,11 +64,11 @@ class File:
            
             result = statement.apply(config, cell_dict, statements is not None)
             
-            coordinates = [coordinates for cell_range in statement.cell_ranges for coordinates in cell_range.get_coordinates()]
+            coordinates = [cs for cell_range in statement.cell_ranges for cs in cell_range.get_coordinates()]
             for coordinate in coordinates:
                 self.expressions[cell_dict[coordinate].expressions[statement.attrib].text] = self.expressions.get(cell_dict[coordinate].expressions[statement.attrib].text, set()) | set([coordinate])
                 
-            return result
+        return result
 
     def compact(self):
         exp_to_compact_ranges = {}
