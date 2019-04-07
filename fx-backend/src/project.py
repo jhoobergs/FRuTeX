@@ -3,13 +3,12 @@ import json
 
 from fx_exception import FXException
 from file import File
-from frutex_parser import FrutexParser
 from config import Config
 
 class Project:
     def __init__(self, directory='../testdir'):
         self.directory = directory
-        self.files = []
+        self.files = {}
         self.config = None
         self.cell_dict = {}
 
@@ -24,15 +23,15 @@ class Project:
         self.config = Config(self.directory + '/config.fx')
         self.config.parse()
     
-        files = []
+        files = {}
         for filename in fx_files:
             file = File(self.directory + '/' + filename)
             file.parse()
-            files.append(file)
+            files.update({file.attrib: file})
             
         self.files = files
         
-        for file in self.files:
+        for file in self.files.values():
             file.apply_statements(self.cell_dict)
     
     def generate_json(self):
@@ -47,7 +46,10 @@ class Project:
         data["row_height"] = {str(i): self.config.values["default_height"] for i in range(int(num_of_rows))}
         
         for cell in self.cell_dict.values():
-            data["cells"][str(cell.row) + ', ' + str(cell.col)] = cell.to_json(self.config)
+            data["cells"][str(cell.row) + ', ' + str(cell.col)] = cell.to_json(self.config, self.cell_dict)
             
         return json.dumps(data)
+      
+    def compact(self):
+        
         

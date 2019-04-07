@@ -12,6 +12,7 @@ class File:
         self.path = path
         self.statements = []
         self.attrib = None
+        self.expressions = {}
         
         if 'config.fx' != os.path.basename(self.path):
             try:
@@ -57,8 +58,16 @@ class File:
         
     def apply_statements(self, cell_dict):
         for statement in self.statements:
+            coordinates = [coordinates for cell_range in statement.cell_ranges for coordinates in cell_range.get_coordinates() if coordinates in self.expressions]
+            for coordinate in coordinates:
+                self.expressions[cell.expression.text].discard(coordinates)
+           
             statement.apply(cell_dict)
+            
+            for coordinate in coordinates:
+                self.expressions[cell.expression.text] = self.expressions.get(cell.expression.text, set()) | set(coordinate)
         
-        
+    def compact(self):
+      
         
         

@@ -1,1 +1,1 @@
-default_color = 0x555
+default_color = 555
