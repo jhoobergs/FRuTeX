@@ -66,8 +66,3 @@ class File:
             
             for coordinate in coordinates:
                 self.expressions[cell.expression.text] = self.expressions.get(cell.expression.text, set()) | set(coordinate)
-        
-    def compact(self):
-      
-        
-        

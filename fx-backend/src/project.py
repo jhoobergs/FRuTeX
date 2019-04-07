@@ -50,6 +50,4 @@ class Project:
             
         return json.dumps(data)
       
-    def compact(self):
-        
-        
+import time;t=time.time();p=Project();p.parse();p.generate_json();print(time.time()-t)
