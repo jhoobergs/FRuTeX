@@ -37,6 +37,8 @@ def tree_to_repr(tree, dependent_info):
         return PowerExpression(tree_to_repr(tree.children[0], dependent_info), tree_to_repr(tree.children[1], dependent_info))
     elif tree.data == "funccall":
         return functions[tree.children[0].value](list(map(lambda child: tree_to_repr(child, dependent_info), tree.children[1].children)), dependent_info)
+    elif tree.data == "string":
+        return String(tree.children[0].value[1:-1])
 
 class ConstExpression:
     def __init__(self, value):
@@ -44,6 +46,13 @@ class ConstExpression:
 
     def eval(self, cell, attrib, config, cell_dict):
         return self
+
+class String (ConstExpression):
+    def __init__(self, value):
+        super().__init__(value)
+    
+    def __repr__(self):
+        return "String: " + str(self.value)
         
 class Boolean (ConstExpression):
     def __init__(self, value):
@@ -349,6 +358,7 @@ class FrutexParser():
       expression = expression.text
     
     parsed_expression = self.parse(expression)
+    #print(parsed_expression)
     repr = tree_to_repr(parsed_expression, (cell, attrib))
     return repr.eval(cell, attrib, config, cell_dict)
 
@@ -498,7 +508,7 @@ class FuncExpression (FrutexExpression):
 
 class ArgsFuncExpression (FuncExpression):
   def __init__(self, args, dependent_info):
-    super().__init__(args)
+    super().__init__(args, dependent_info)
 
   def eval(self, cell, attrib, config, cell_dict): 
     return self.func()(self.args)

@@ -153,3 +153,11 @@ c.expressions["content"] = Expression("""
     0
 """)
 assert fp.eval(c, "content", None, None).value == 1
+
+c.expressions["content"] = Expression("""
+  if(54 == 6 * (4 + 5))
+    "Blue"
+  else
+    "Red"
+""")
+assert fp.eval(c, "content", None, None).value == "Blue"
