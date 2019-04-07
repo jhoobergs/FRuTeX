@@ -13,7 +13,7 @@ c.expressions["content"] = Expression("""
   else
     7
 """)
-assert fp.eval(c, "content", None).value == 5 
+assert fp.eval(c, "content", None, None).value == 5 
 
 
 c.expressions["content"] = Expression("""
@@ -22,7 +22,7 @@ c.expressions["content"] = Expression("""
   else
     7
 """)
-assert fp.eval(c, "content", None).value == 7
+assert fp.eval(c, "content", None, None).value == 7
 
 
 c.expressions["content"] = Expression("""
@@ -31,7 +31,7 @@ c.expressions["content"] = Expression("""
   else
     5
 """)
-assert fp.eval(c, "content", None).value == 4
+assert fp.eval(c, "content", None, None).value == 4
 
 c.expressions["content"] = Expression("""
   if (7 != 7.0)
@@ -39,17 +39,17 @@ c.expressions["content"] = Expression("""
   else
     5
 """)
-assert fp.eval(c, "content", None).value == 5
+assert fp.eval(c, "content", None, None).value == 5
 
 c.expressions["content"] = Expression("""
   -5 ++ 4
 """)
-assert fp.eval(c, "content", None).value == -1
+assert fp.eval(c, "content", None, None).value == -1
 
 c.expressions["content"] = Expression("""
   3**4
 """)
-assert fp.eval(c, "content", None).value == 3**4
+assert fp.eval(c, "content", None, None).value == 3**4
 
 c.expressions["content"] = Expression("""
   if (7 > 5)
@@ -58,19 +58,19 @@ c.expressions["content"] = Expression("""
     7
 """)
 
-assert fp.eval(c, "content", None).value == 5 
+assert fp.eval(c, "content", None, None).value == 5 
 c.expressions["content"] = Expression("""
   if (7 < 5)
     5
   else
     7
 """)
-assert fp.eval(c, "content", None).value == 7
+assert fp.eval(c, "content", None, None).value == 7
 
 c.expressions["content"] = Expression("""
  max(1,2,3)
 """)
-assert fp.eval(c, "content", None).value == 3
+assert fp.eval(c, "content", None, None).value == 3
 
 c.expressions["content"] = Expression("""
   if (min(7, 5, 6) < 5)
@@ -78,7 +78,7 @@ c.expressions["content"] = Expression("""
   else
     7
 """)
-assert fp.eval(c, "content", None).value == 7
+assert fp.eval(c, "content", None, None).value == 7
 
 c.expressions["content"] = Expression("""
   if (5 * 6 == 1)
@@ -86,4 +86,14 @@ c.expressions["content"] = Expression("""
   else
     3 // 2
 """)
-assert fp.eval(c, "content", None).value == 1
+assert fp.eval(c, "content", None, None).value == 1
+
+c.expressions["content"] = Expression("""
+  if (5 * 6 == 1)
+    4 + 67
+  elif (7 == 7)
+    85
+  else
+    3 // 2
+""")
+assert fp.eval(c, "content", None, None).value == 85

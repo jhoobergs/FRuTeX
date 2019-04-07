@@ -297,7 +297,7 @@ class FrutexParser():
             | value
             | comp_exp
             | add_exp
-        ?if_exp: "if" "(" expr ")" expr ["else" expr] 
+        ?if_exp: "if" "(" expr ")" expr ("elif" "(" expr ")" expr )* ["else" expr] 
         ?comp_exp: expr _comp_op expr
         ?add_exp: term_exp (_add_op term_exp)*
         ?term_exp: factor (_mult_op factor)*
