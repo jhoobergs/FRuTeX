@@ -4,6 +4,7 @@ import json
 from fx_exception import FXException
 from file import File
 from config import Config
+from expression import Expression
 
 class Project:
     def __init__(self, directory='../testdir'):
@@ -62,5 +63,5 @@ class Project:
     def update_expression(self, cell_pos, attrib, expression):
         cell = self.cell_dict[cell_pos]
       
-        self.data["cells"].update(cell.update_expression(attrib, expression, self.config, self.cell_dict))
+        self.data["cells"].update(cell.update_expression(attrib, Expression(expression), self.config, self.cell_dict))
         return json.dumps(self.data)
