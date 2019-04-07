@@ -1,2 +1,6 @@
-export const CELLS_FETCH = 'CELLS_FETCH'
-export const NEWS_RECEIVED = 'NEWS_RECEIVED'
+export const CELLS_FETCH = () => ({
+    type: 'CELLS_FETCH',
+});
+export const DATA_RECEIVED = () => ({
+    type: 'DATA_RECEIVED',
+});

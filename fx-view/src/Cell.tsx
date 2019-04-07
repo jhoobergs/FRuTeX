@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import './Cell.css';
 
-var bgColor = { Default: "#81b71a",
+export const bgColor = { Default: "#81b71a",
                     Blue: "#00B1E1",
                     Cyan: "#37BC9B",
                     Green: "#8CC152",
@@ -9,7 +9,7 @@ var bgColor = { Default: "#81b71a",
                     Yellow: "#F6BB42",
 };
 
-class Cell extends React.Component<{value: string, color: string}, { value: string, color: string }>  {
+class Cell extends React.Component<{key: string, value: string, color: string}, {value: string, color: string }>  {
     constructor(props: any) {
       super(props);
       this.state = {
@@ -35,9 +35,9 @@ class Cell extends React.Component<{value: string, color: string}, { value: stri
   
     render() {
       return (
-        <view>
+        <td>
             <input type="text" value={this.state.value} style={{backgroundColor: this.state.color}} onChange={(event) =>this.handleValueChange(event.target.value)} />
-        </view>
+        </td>
       );
     }
   }

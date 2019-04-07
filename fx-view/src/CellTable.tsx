@@ -1,60 +1,77 @@
 import React from 'react'
-import Cell from './Cell';
+import Cell, { bgColor } from './Cell';
 import './CellTable.css';
 import { CELLS_FETCH } from './actions';
 import { connect } from 'react-redux';
+import { watchFile } from 'fs';
 
 interface StateProps {
-
+  cells: { [key: string]: {
+    content: string,
+    color: string
+  } }
+  loading: boolean
 }
 
 interface DispatchProps {
-  cellsFetch: () => void
+  cellsFetch: () => any
 }
 
 type Props = StateProps & DispatchProps
 
 
 interface State {
-  cells: {}
+  
 }
 
 class MyTable extends React.PureComponent<Props, State> {
   constructor(props: any) {
     super(props);
+    this.props.cellsFetch();
   }
 
   createTable = () => {
     let table = []
     let n: number =  10;
+    let k: number = 0;
     // Outer loop to create parent
     for (let i = 0; i < n; i++) {
       let children = []
       //Inner loop to create children
       for (let j = 0; j < n; j++) {
-        children.push(<Cell value={String(i+j)} color="Cyan"></Cell>)
+        children.push(<Cell key ={k.toString()} value={(this.props.cells[`${i}, ${j}`] || {content:""}).content} color={(this.props.cells[`${i}, ${j}`] || {color: bgColor.Default}).color}></Cell>)
+        k += 1
       }
       //Create the parent and add the children
-      table.push(<tr>{children}</tr>)
+      table.push(<tr key ={k.toString()}>{children}</tr>)
     }
     return table
   }
 
   render() {
-    return(
-      <table>
-        {this.createTable()}
-      </table>
-    )
-  }
+    let content = <h1>Loading</h1>
+    if(! this.props.loading){
+      content = <table>
+      <tbody>
+      {this.createTable()}
+      </tbody>
+    </table>
+    }
 
+    return(<div>
+        {content}
+      </div>
+    );
+  }
 }
 
 
 function mapStateToProps (state: any): StateProps {
+  console.log('here')
+  console.log(JSON.stringify(state.cells))
   return {
-    ...state,
     cells: state.cells,
+    loading: state.loading
   }
 }
 
@@ -62,7 +79,8 @@ function mapStateToProps (state: any): StateProps {
 function mapDispatchToProps (dispatch: any): DispatchProps {
   return {
     cellsFetch () {
-      dispatch({ type: CELLS_FETCH })
+      console.log('Dispatching')
+      dispatch({type: 'CELLS_FETCH'})
     },
   }
 }
