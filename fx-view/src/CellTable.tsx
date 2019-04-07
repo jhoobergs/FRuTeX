@@ -15,6 +15,7 @@ interface StateProps {
 
 interface DispatchProps {
   cellsFetch: () => any
+  updateValue: (row: number, col: number, attrib: string, value: string) => any
 }
 
 type Props = StateProps & DispatchProps
@@ -39,7 +40,7 @@ class MyTable extends React.PureComponent<Props, State> {
       let children = []
       //Inner loop to create children
       for (let j = 0; j < n; j++) {
-        children.push(<Cell key ={k.toString()} value={(this.props.cells[`${i}, ${j}`] || {content:""}).content} color={(this.props.cells[`${i}, ${j}`] || {color: bgColor.Default}).color}></Cell>)
+        children.push(<Cell updateValue={(attrib: string, value: string) => this.props.updateValue(i,j, attrib, value)} key ={k.toString()} value={(this.props.cells[`${i}, ${j}`] || {content:""}).content} color={(this.props.cells[`${i}, ${j}`] || {color: bgColor.Default}).color}></Cell>)
         k += 1
       }
       //Create the parent and add the children
@@ -80,7 +81,11 @@ function mapDispatchToProps (dispatch: any): DispatchProps {
     cellsFetch () {
       console.log('Dispatching')
       dispatch({type: 'CELLS_FETCH'})
-    },
+    }, updateValue(row: number, col: number, attrib: string, value: string) {
+      dispatch({type: 'UPDATE_VALUE', payload: {
+        row, col, attrib, value
+      }})
+    }
   }
 }
 

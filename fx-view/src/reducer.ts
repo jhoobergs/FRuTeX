@@ -19,6 +19,11 @@ export default function reducer (state: any = initialState, action: any): any {
       return {
         ...state, cells: action.cells, loading: false
       }
+    case 'UPLOAD_DATA':
+    console.log('I am at UPLOAD_DATA')
+    return {
+      ...state
+    }
     default:
       return state
   }

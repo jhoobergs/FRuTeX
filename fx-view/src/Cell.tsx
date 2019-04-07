@@ -9,7 +9,19 @@ export const bgColor = { Default: "#81b71a",
                     Yellow: "#F6BB42",
 };
 
-class Cell extends React.Component<{key: string, value: string, color: string}, {value: string, color: string }>  {
+interface StateProps {
+  key: string,
+  value: string,
+  color: string
+}
+
+interface DispatchProps {
+  updateValue: (attrib: string, value: string) => void
+}
+
+type Props = StateProps & DispatchProps
+
+class Cell extends React.Component<Props, any>  {
     constructor(props: any) {
       super(props);
       this.state = {
@@ -25,6 +37,7 @@ class Cell extends React.Component<{key: string, value: string, color: string}, 
         this.setState({
             value: value
         });
+        this.props.updateValue("content", this.state.value);
     }
 
     handleColorChange(color: any) {
