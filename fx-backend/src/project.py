@@ -52,8 +52,8 @@ class Project:
         data["column_width"] = {str(i): self.config.values["default_col_size"].value for i in range(int(num_of_cols))}
         data["column_width"].update({str(i): self.cell_dict[(None, i)].get_expression_text('col_size', self.config, self.cell_dict) for i in range(int(num_of_cols)) if (None, i) in self.cell_dict})
         
-        data["row_height"] = {str(i): self.config.values["default_row_size"].value for i in range(int(num_of_rows))}
-        data["row_height"].update({str(i): self.cell_dict[(i, None)].get_expression_text('row_size', self.config, self.cell_dict) for i in range(int(num_of_rows)) if (i, None) in self.cell_dict})
+        data["row_height"] = {str(i): str(self.config.values["default_row_size"].value) for i in range(int(num_of_rows))}
+        data["row_height"].update({str(i): str(self.cell_dict[(i, None)].get_expression_text('row_size', self.config, self.cell_dict)) for i in range(int(num_of_rows)) if (i, None) in self.cell_dict})
         
         for cell in self.cell_dict.values():
             if None in (cell.col, cell.row):
