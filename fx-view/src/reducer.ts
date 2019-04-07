@@ -19,6 +19,12 @@ export default function reducer (state: any = initialState, action: any): any {
       return {
         ...state, cells: action.cells, loading: false
       }
+    case 'UPDATE_VALUE':
+    console.log('I am at UPDATE_VALUE')
+    return {
+      ...state,
+      loading: true
+    }
     default:
       return state
   }

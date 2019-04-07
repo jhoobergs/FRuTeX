@@ -9,7 +9,19 @@ export const bgColor = { Default: "#81b71a",
                     Yellow: "#F6BB42",
 };
 
-class Cell extends React.Component<{key: string, value: string, color: string}, {value: string, color: string }>  {
+interface StateProps {
+  key: string,
+  value: string,
+  color: string
+}
+
+interface DispatchProps {
+  updateValue: (attrib: string, value: string) => void
+}
+
+type Props = StateProps & DispatchProps
+
+class Cell extends React.Component<Props, any>  {
     constructor(props: any) {
       super(props);
       this.state = {
@@ -18,13 +30,19 @@ class Cell extends React.Component<{key: string, value: string, color: string}, 
       };
   
       this.handleValueChange = this.handleValueChange.bind(this);
+      this.handleKeyPress = this.handleKeyPress.bind(this);
       this.handleColorChange = this.handleColorChange.bind(this);
     }
 
-    handleValueChange(value: any) {
+    handleValueChange(event: any) {
         this.setState({
-            value: value
+            value: event.target.value
         });
+      }
+
+    handleKeyPress(event: any) {
+        if(event.key == "Enter")
+          this.props.updateValue("content", event.target.value);
     }
 
     handleColorChange(color: any) {
@@ -36,7 +54,7 @@ class Cell extends React.Component<{key: string, value: string, color: string}, 
     render() {
       return (
         <button>
-            <input type="text" value={this.state.value} style={{backgroundColor: this.state.color}} onChange={(event) =>this.handleValueChange(event.target.value)} />
+            <input type="text" value={this.state.value} style={{backgroundColor: this.state.color}} onChange={(event) =>this.handleValueChange(event)} onKeyPress={(event) =>this.handleKeyPress(event)} />
         </button>
       );
     }
