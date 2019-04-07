@@ -400,7 +400,7 @@ class VarExpression(FrutexExpression):
     if(self.name == "R"):
       return Integer(cell.row)
     elif(self.name == "C"):
-      return Integer(cell.column)
+      return Integer(cell.col)
     else:
       raise FXException("Unknown variable: " + self.name)
     ranges = file.File.parse_cell_ranges(self.name)
@@ -513,7 +513,8 @@ class CellExpression (FuncExpression):
     super().__init__(args)
     
   def eval(self, cell, attrib, config, cell_dict):
-    return cell_dict[(self.args[0].value, self.args[1].value)]
+    return cell_dict.get((self.args[0].eval(cell, attrib, config, cell_dict).value, self.args[1].eval(cell, attrib, config, cell_dict).value))
+  
   
 class GetContentExpression (FuncExpression):
   def __init__(self, args):
@@ -523,8 +524,11 @@ class GetContentExpression (FuncExpression):
     super().__init__(args)
     
   def eval(self, cell, attrib, config, cell_dict):
+    if self.args[0].eval(cell, attrib, config, cell_dict) == None:
+      return None
+      
     return self.args[0].eval(cell, attrib, config, cell_dict).get_expression_result("content", config, cell_dict)
-  
+
 class GetColorExpression (FuncExpression):
   def __init__(self, args):
     if type(args) != list or len(args) != 1:
@@ -533,6 +537,9 @@ class GetColorExpression (FuncExpression):
     super().__init__(args)
     
   def eval(self, cell, attrib, config, cell_dict):
+    if self.args[0] == None:
+      return None
+    
     return self.args[0].eval(cell, attrib, config, cell_dict).get_expression_result("color", config, cell_dict)
     
   
