@@ -53,4 +53,3 @@ class Project:
     def compact(self):
         for file in self.files.values():
             file.compact()
-        

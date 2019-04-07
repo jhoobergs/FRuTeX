@@ -12,12 +12,14 @@ class Cell:
         self.expressions[attrib] = expression
         self.evaluated_expressions[attrib] = None
         
-    def get_expression_text(self, attrib, config):
-        if attrib in self.expressions:
-            return self.expressions[attrib].text
+    def get_expression_text(self, attrib, config, cell_dict):
+        result = self.get_expression_result(attrib, config, cell_dict)
+        
+        if result is None:
+          return config.get_default(attrib)
         
         else:
-            return config.get_default(attrib)
+          return str(result.value)
           
     def get_expression_result(self, attrib, config, cell_dict):
         e = self.evaluated_expressions.get(attrib)
@@ -33,7 +35,7 @@ class Cell:
         json = {}
         
         for attrib in constants.attrib_dict.values():
-            json[attrib] = str(self.get_expression_result(attrib, config, cell_dict).value)
+            json[attrib] = self.get_expression_text(attrib, config, cell_dict)
             
         return json
         
