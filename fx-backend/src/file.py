@@ -82,7 +82,6 @@ class File:
                 best_length = 0
 
                 old_ranges = [CellRange((row,row+1),(col,col+1))]
-                print([(new_range.rows, new_range.cols) for new_range in old_ranges])
                 while(len(old_ranges) > 0):
                     new_ranges = [CellRange((current_range.rows[0] + step2[0], current_range.rows[1] + step2[1]), (current_range.cols[0] + step1[0], current_range.cols[1] + step1[1])) for step2 in [(0,1),(-1,0),(0,0)] for step1 in [(-1,0),(0,1),(0,0)] if step1 != step2 or step1 != (0,0) for current_range in old_ranges]
                     #print([(new_range.rows, new_range.cols) for new_range in new_ranges])
@@ -101,16 +100,17 @@ class File:
     def to_code(self):
         code = ""
         
-        for expression, cell_ranges in self.expressions.items():
+        for expression, cell_ranges in self.compact().items():
             if not cell_ranges:
                 continue
               
-            ceil_range = list(ceil_range)
+            print(cell_ranges)
+            cell_ranges = list(cell_ranges)
           
             for cell_range in cell_ranges[:-1]:
                 code += cell_range.to_code() + ',\n'
-            code += cell_ranges[-1].to_code() + '= '
+            code += cell_ranges[-1].to_code() + ' = '
             
-            code += expression.text + '\n'
+            code += expression + '\n'
             
         return code
