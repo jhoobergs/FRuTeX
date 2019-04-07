@@ -67,5 +67,7 @@ class File:
             for cell in cells:
                 self.expressions[cell.expression.text] = self.expressions.get(cell.expression.text, []) + [cell]
         
+    def compact(self):
+      
         
         

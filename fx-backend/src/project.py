@@ -49,4 +49,7 @@ class Project:
             data["cells"][str(cell.row) + ', ' + str(cell.col)] = cell.to_json(self.config, self.cell_dict)
             
         return json.dumps(data)
+      
+    def compact(self):
+        
         
