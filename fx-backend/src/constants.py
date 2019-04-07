@@ -25,6 +25,6 @@ default_config = {
         "default_color"    : frutex_parser.Integer(0xffd750),
         "default_col_size" : frutex_parser.Integer(75),
         "default_row_size" : frutex_parser.Integer(30),
-        "num_rows"         : "20",
-        "num_cols"         : "20",
+        "num_rows"         : frutex_parser.Integer(20),
+        "num_cols"         : frutex_parser.Integer(20),
 }

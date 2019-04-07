@@ -41,8 +41,8 @@ class Project:
     
     def generate_json(self):
         data = {"config": {}, "cells": {}}
-        num_of_rows = self.config.values["num_rows"]
-        num_of_cols = self.config.values["num_cols"]
+        num_of_rows = self.config.values["num_rows"].value
+        num_of_cols = self.config.values["num_cols"].value
         default_color = self.config.values["default_color"].value
         
         data["config"]["num_of_rows"] = num_of_rows
