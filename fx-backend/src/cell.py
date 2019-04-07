@@ -36,15 +36,15 @@ class Cell:
     def get_expression_text(self, attrib, config, cell_dict):
         result = self.get_expression_result(attrib, config, cell_dict)
         
-        if result is None:
-          return config.get_default(attrib).value
+        if result is None or isinstance(result, frutex_parser.NoneExpr):
+          return_value = config.get_default(attrib).value
         
         else:
           return_value = result.value
           if attrib == 'color':
               return_value = '#' + hex(return_value)[2:]
               
-          return str(return_value)
+        return str(return_value)
           
     def get_expression_result(self, attrib, config, cell_dict):
         e = self.evaluated_expressions.get(attrib)
