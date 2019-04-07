@@ -63,6 +63,11 @@ class Boolean (ConstExpression):
 
     def __bool__(self):
         return self.value
+      
+class NoneExpr (ConstExpression):
+    def __init__(self):
+        super().__init__(None)
+      
 
 class Float (ConstExpression):
     def __init__(self, value):

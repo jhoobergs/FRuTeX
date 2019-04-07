@@ -43,7 +43,7 @@ class Project:
         data = {"config": {}, "cells": {}}
         num_of_rows = self.config.values["num_rows"]
         num_of_cols = self.config.values["num_cols"]
-        default_color = self.config.values["default_color"]
+        default_color = self.config.values["default_color"].value
         
         data["config"]["num_of_rows"] = num_of_rows
         data["config"]["num_of_cols"] = num_of_cols
@@ -56,7 +56,7 @@ class Project:
             data["cells"][str(cell.row) + ', ' + str(cell.col)] = cell.to_json(self.config, self.cell_dict)
             
         self.data = data
-            
+        
         return json.dumps(data)
       
     def compact_all(self):

@@ -37,7 +37,7 @@ class Cell:
         result = self.get_expression_result(attrib, config, cell_dict)
         
         if result is None:
-          return config.get_default(attrib)
+          return config.get_default(attrib).value
         
         else:
           return str(result.value)
@@ -53,7 +53,7 @@ class Cell:
                 expr_result = frutex_parser.FrutexParser().eval(self, attrib, config, cell_dict)
                 
             self.evaluated_expressions[attrib] = expr_result
-            
+
             return expr_result
         
     def to_json(self, config, cell_dict):
@@ -61,6 +61,6 @@ class Cell:
         
         for attrib in constants.attrib_dict.values():
             json[attrib] = self.get_expression_text(attrib, config, cell_dict)
-            
+
         return json
         

@@ -1,5 +1,6 @@
 from file import File
 import constants
+import frutex_parser
 
 class Config (File):
     def __init__(self, path):
@@ -17,6 +18,6 @@ class Config (File):
         for line in lines:
             key, value = line.split('=')
             key = key.strip()
-            value = value.strip()
+            value = frutex_parser.Integer(value.strip())
             
             self.values[key] = value
