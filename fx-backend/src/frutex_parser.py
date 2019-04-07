@@ -29,6 +29,8 @@ def tree_to_repr(tree):
         return CompareExpression(tree_to_repr(tree.children[0]), tree.children[1], tree_to_repr(tree.children[2]))
     elif tree.data in ["add_exp", "term_exp"] :
         return ArithExpression(list(map(tree_to_repr, tree.children)))
+    elif tree.data in ["or_exp", "and_exp"] :
+        return BoolExpression(list(map(tree_to_repr, tree.children)))
     elif tree.data == "factor":
         return UnaryExpression(tree.children[0].value, tree_to_repr(tree.children[1]))
     elif tree.data == "pow_exp":
@@ -47,12 +49,11 @@ class Boolean (ConstExpression):
     def __init__(self, value):
         super().__init__(bool(value))
     
-    def is_true(self):
-        return self.value
-
     def __repr__(self):
         return "Boolean: " + str(self.value)
 
+    def __bool__(self):
+        return self.value
 
 class Float (ConstExpression):
     def __init__(self, value):
@@ -293,21 +294,22 @@ class Integer (ConstExpression):
 class FrutexParser():
   def __init__(self):
     self.parser = Lark(r"""
-        ?expr: if_exp
+        ?expr: comp_exp 
             | value
-            | comp_exp
+            | if_exp
             | add_exp
+            | or_exp
         ?if_exp: "if" "(" expr ")" expr ("elif" "(" expr ")" expr )* ["else" expr] 
         ?comp_exp: expr _comp_op expr
         ?add_exp: term_exp (_add_op term_exp)*
         ?term_exp: factor (_mult_op factor)*
         ?factor: _factor_op factor | pow_exp
         ?pow_exp: value ["**" factor]
-        ?value: float
+        ?or_exp: and_exp (_or_op and_exp)*
+        ?and_exp: comp_exp (_and_op comp_exp)*
+        ?value: "(" expr ")"
+        | float
         | integer
-        | "(" expr ")"
-        | "true" -> true
-        | "false" -> false
         | NAME "(" [arguments] ")" -> funccall
         | NAME -> var
         | string
@@ -320,8 +322,10 @@ class FrutexParser():
 
         !_comp_op: ">"|"<"|">="|"<="|"=="|"!="
         !_mult_op: "*"|"/"|"//"|"%"
-        !_factor_op: "+"|"-"
+        !_factor_op: "+"|"-"|"not"
         !_add_op: "+"|"-"
+        !_or_op: "or"
+        !_and_op: "and"
         NAME: /[a-zA-Z_][\w:]*/
 
         %import common.DECIMAL
@@ -355,23 +359,9 @@ class FrutexExpression():
   def __repr__(self):
     return "FrutexExpression"
 
-class CompoundExpression(FrutexExpression):
+class IfExpression():
   def __init__(self, children):
     self.children = children
-  
-  def __repr__(self):
-    return "CompoundExpression: " + " ".join([repr(c) for c in self.children])
-
-class SuiteExpression(CompoundExpression):
-  def __init__(self, children):
-    super().__init__(children)
-  
-  def eval(self, cell, attrib, config, cell_dict):
-    return [c.eval(cell, attrib, config, cell_dict) for c in self.children][-1]
-
-class IfExpression(CompoundExpression):
-  def __init__(self, children):
-    super().__init__(children)
     
   def __repr__(self):
     return "IfExpression: " + " ".join([repr(c) for c in self.children])
@@ -384,7 +374,7 @@ class IfExpression(CompoundExpression):
       return lst[0].eval(cell, attrib, config, cell_dict)
       
     else:
-      if lst[0].eval(cell, attrib, config, cell_dict).is_true():
+      if lst[0].eval(cell, attrib, config, cell_dict):
           return lst[1].eval(cell, attrib, config, cell_dict)
       else:
           return self.eval_condition(lst[2:], cell, attrib, config, cell_dict)
@@ -401,6 +391,10 @@ class VarExpression(FrutexExpression):
       return Integer(cell.row)
     elif(self.name == "C"):
       return Integer(cell.col)
+    elif(self.name == "true"):
+      return Boolean(True)
+    elif(self.name == "false"):
+      return Boolean(False)
     else:
       raise FXException("Unknown variable: " + self.name)
     ranges = file.File.parse_cell_ranges(self.name)
@@ -456,6 +450,24 @@ class ArithExpression (FrutexExpression):
   def __repr__(self):
     return "ArithExpression: " + " ".join(map(repr, self.children))
 
+bool_operators = {
+  "or": lambda a, b: a or b,
+  "and": lambda a, b: a and b
+}
+
+class BoolExpression (FrutexExpression):
+  def __init__(self, children):
+    self.children = children
+        
+  def eval(self, cell, attrib, config, cell_dict):
+    head, *tail = self.children
+    tail = [(tail[i], tail[i + 1]) for i in range(0, len(tail), 2)]
+    return reduce(lambda state, op_elem: bool_operators[op_elem[0]](state, op_elem[1].eval(cell, attrib, config, cell_dict)), tail, head.eval(cell, attrib, config, cell_dict))
+     
+  def __repr__(self):
+    return "BoolExpression: " + " ".join(map(repr, self.children))
+
+
 class UnaryExpression (FrutexExpression):
     def __init__(self, op, elem):
         self.op = op
@@ -463,9 +475,11 @@ class UnaryExpression (FrutexExpression):
         
     def eval(self, cell, attrib, config, cell_dict):
         if self.op == '-':
-            return -self.elem
+            return -self.elem.eval(cell, attrib, config, cell_dict)
         elif self.op == '+':
-            return +self.elem
+            return +self.elem.eval(cell, attrib, config, cell_dict)
+        elif self.op == 'not':
+            return not self.elem.eval(cell, attrib, config, cell_dict)
         else:
             raise FXException()
 
