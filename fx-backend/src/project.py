@@ -59,6 +59,8 @@ class Project:
         for file in self.files.values():
             file.compact()
             
-    def amend_expression(self, cell, attrib, expression):
-        self.data["cells"].update(cell.amend_expression(attrib, expression, self.config, self.cell_dict))
+    def update_expression(self, cell_pos, attrib, expression):
+        cell = self.cell_dict[cell_pos]
+      
+        self.data["cells"].update(cell.update_expression(attrib, expression, self.config, self.cell_dict))
         return json.dumps(self.data)

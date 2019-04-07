@@ -107,7 +107,6 @@ class File:
           
             for cell_range in cell_ranges[:-1]:
                 code += cell_range.to_code() + ',\n'
-            
-            code += cell_ranges[-1].to_code() + '='
+            code += cell_ranges[-1].to_code() + '= '
             
             

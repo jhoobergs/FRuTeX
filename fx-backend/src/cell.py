@@ -28,7 +28,7 @@ class Cell:
             
         return d
           
-    def amend_expression(self, attrib, expression, config, cell_dict):
+    def update_expression(self, attrib, expression, config, cell_dict):
         self.apply_expression(attrib, expression)
         return self.refresh(attrib, config, cell_dict)
         
