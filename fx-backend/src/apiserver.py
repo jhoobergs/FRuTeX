@@ -91,9 +91,9 @@ class ApiHandler(BaseHTTPRequestHandler):
 
     def do_OPTIONS(self):
         self.send_response(200)
-        self.send_header("Access-Control-Allow-Origin", "*")
+        self.send_header("Access-Control-Allow-Origin", self.headers["origin"])
         self.send_header('Access-Control-Allow-Methods', 'POST, OPTIONS, GET')
-        self.send_header("Access-Control-Allow-Headers", "*")
+        self.send_header("Access-Control-Allow-Headers", "Authorization, Cache-Control, Access-Control-Allow-Headers, Origin,Accept, X-Requested-With, Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers")
         self.end_headers()
 
 
