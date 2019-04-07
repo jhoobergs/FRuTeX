@@ -104,6 +104,8 @@ class File:
         for expression, cell_ranges in self.expressions.items():
             if not cell_ranges:
                 continue
+              
+            ceil_range = list(ceil_range)
           
             for cell_range in cell_ranges[:-1]:
                 code += cell_range.to_code() + ',\n'
