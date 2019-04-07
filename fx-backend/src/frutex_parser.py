@@ -68,6 +68,50 @@ class NoneExpr (ConstExpression):
     def __init__(self):
         super().__init__(None)
       
+    def __gt__(self, other):
+        return NoneExpr()
+
+    def __ge__(self, other):
+        return NoneExpr()
+    
+    def __lt__(self, other):
+        return NoneExpr()
+    
+    def __le__(self, other):
+        return NoneExpr()
+    
+    def __eq__(self, other):
+        return NoneExpr()
+    
+    def __ne__(self, other):
+        return NoneExpr()
+    
+    def __pos__(self):
+        return NoneExpr()
+    
+    def __neg__(self):
+        return NoneExpr()
+    
+    def __add__(self, other):
+        return NoneExpr()
+            
+    def __sub__(self, other):
+        return NoneExpr()
+            
+    def __mul__(self, other):
+        return NoneExpr()
+            
+    def __floordiv__(self, other):
+        return NoneExpr()
+            
+    def __truediv__(self, other):
+        return NoneExpr()
+            
+    def __mod__(self, other):
+        return NoneExpr()
+            
+    def __pow__(self, other):
+        return NoneExpr()
 
 class Float (ConstExpression):
     def __init__(self, value):
@@ -560,7 +604,7 @@ class GetContentExpression (FuncExpression):
     
   def eval(self, cell, attrib, config, cell_dict):
     if self.args[0].eval(cell, attrib, config, cell_dict) is None:
-      return None
+      return NoneExpr()
     
     self.update_dependencies(cell, attrib, config, cell_dict)
       
@@ -575,7 +619,7 @@ class GetColorExpression (FuncExpression):
     
   def eval(self, cell, attrib, config, cell_dict):
     if self.args[0].eval(cell, attrib, config, cell_dict) is None:
-      return None
+      return NoneExpr()
     
     return self.args[0].eval(cell, attrib, config, cell_dict).get_expression_result("color", config, cell_dict)
     
