@@ -33,9 +33,6 @@ class File:
             if len(matches) == 0:
                 raise FXException("Invalid syntax")
                 
-            if len(matches) == 1:
-                raise FXException("Infinite ranges not yet implemented")
-                
             cell_ranges.append(CellRange(matches.get('R'), matches.get('C')))
             
         return cell_ranges
@@ -52,11 +49,13 @@ class File:
         for match in matches:
             statements.append(Statement(self.attrib,
                                         File.parse_cell_ranges(match[0]),
-                                        Expression(match[3] or match[1])))
+                                        Expression(match[3].strip() or match[1].strip())))
         
         self.statements = statements
         
     def apply_statements(self, config, cell_dict, statements=None):
+        result = None
+        
         for statement in (statements, self.statements)[statements is None]:
             coordinates = [coordinates for cell_range in statement.cell_ranges for coordinates in cell_range.get_coordinates() if coordinates in self.expressions]
             for coordinate in coordinates:

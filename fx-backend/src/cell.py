@@ -59,7 +59,7 @@ class Cell:
     def to_json(self, config, cell_dict):
         json = {}
         
-        for attrib in constants.attrib_dict.values():
+        for attrib in constants.cell_attrib_dict.values():
             json[attrib] = self.get_expression_text(attrib, config, cell_dict)
 
         return json

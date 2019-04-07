@@ -49,8 +49,11 @@ class Project:
         data["config"]["num_of_cols"] = num_of_cols
         data["config"]["default_color"] = default_color
         
-        data["column_width"] = {str(i): self.config.values["default_width"] for i in range(int(num_of_cols))}
-        data["row_height"] = {str(i): self.config.values["default_height"] for i in range(int(num_of_rows))}
+        data["column_width"] = {str(i): self.config.values["default_col_size"].value for i in range(int(num_of_cols))}
+        data["column_width"].update({str(i): self.cell_dict[(None, i)].get_expression_text('col_size', self.config, self.cell_dict) for i in range(int(num_of_cols)) if (None, i) in self.cell_dict})
+        
+        data["row_height"] = {str(i): self.config.values["default_row_size"].value for i in range(int(num_of_rows))}
+        data["row_height"].update({str(i): self.cell_dict[(i, None)].get_expression_text('row_size', self.config, self.cell_dict) for i in range(int(num_of_rows)) if (i, None) in self.cell_dict})
         
         for cell in self.cell_dict.values():
             data["cells"][str(cell.row) + ', ' + str(cell.col)] = cell.to_json(self.config, self.cell_dict)
