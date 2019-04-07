@@ -522,10 +522,17 @@ class GetContentExpression (FuncExpression):
       raise FXException("Illegal arguments to getContent(): " + str(args))
     
     super().__init__(args, dependent_info)
+
+  def update_dependencies(self, cell, attrib, config, cell_dict):
+    dep_cell, dep_attrib = self.dependent_info
+    
+    self.args[0].eval(cell, attrib, config, cell_dict).add_dependent(dep_cell, dep_attrib, "content")
     
   def eval(self, cell, attrib, config, cell_dict):
     if self.args[0].eval(cell, attrib, config, cell_dict) is None:
       return None
+    
+    self.update_dependencies(cell, attrib, config, cell_dict)
       
     return self.args[0].eval(cell, attrib, config, cell_dict).get_expression_result("content", config, cell_dict)
 
