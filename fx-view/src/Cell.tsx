@@ -16,7 +16,7 @@ interface StateProps {
 }
 
 interface DispatchProps {
-  updateValue: (attrib: string, value: string) => void
+  select: () => void
 }
 
 type Props = StateProps & DispatchProps
@@ -29,32 +29,12 @@ class Cell extends React.Component<Props, any>  {
         color: props.color
       };
   
-      this.handleValueChange = this.handleValueChange.bind(this);
-      this.handleKeyPress = this.handleKeyPress.bind(this);
-      this.handleColorChange = this.handleColorChange.bind(this);
-    }
-
-    handleValueChange(event: any) {
-        this.setState({
-            value: event.target.value
-        });
-      }
-
-    handleKeyPress(event: any) {
-        if(event.key == "Enter")
-          this.props.updateValue("content", event.target.value);
-    }
-
-    handleColorChange(color: any) {
-        this.setState({
-            color: color
-        });
     }
   
     render() {
       return (
         <button>
-            <input type="text" value={this.state.value} style={{backgroundColor: this.state.color}} onChange={(event) =>this.handleValueChange(event)} onKeyPress={(event) =>this.handleKeyPress(event)} />
+            <input type="text" readOnly={true} value={this.state.value} style={{backgroundColor: this.state.color}} onClick={this.props.select} />
         </button>
       );
     }
