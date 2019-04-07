@@ -363,7 +363,7 @@ class FrutexParser():
       expression = expression.text
     
     parsed_expression = self.parse(expression)
-    #print(parsed_expression)
+    
     repr = tree_to_repr(parsed_expression, (cell, attrib))
     return repr.eval(cell, attrib, config, cell_dict)
 
