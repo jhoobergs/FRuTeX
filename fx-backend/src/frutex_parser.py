@@ -4,14 +4,14 @@ from functools import reduce
 import file
 
 functions = {
-    "min": lambda args : MinExpression(args),
-    "max": lambda args: MaxExpression(args),
-    "cell": lambda args: CellExpression(args),
-    "getContent": lambda args: GetContentExpression(args),
-    "getColor": lambda args: GetColorExpression(args),
+    "min": lambda args, dependent_info: MinExpression(args, dependent_info),
+    "max": lambda args, dependent_info: MaxExpression(args, dependent_info),
+    "cell": lambda args, dependent_info: CellExpression(args, dependent_info),
+    "getContent": lambda args, dependent_info: GetContentExpression(args, dependent_info),
+    "getColor": lambda args, dependent_info: GetColorExpression(args, dependent_info),
 }
 
-def tree_to_repr(tree):
+def tree_to_repr(tree, dependent_info):
     #print(tree)
    
     if type(tree) != Tree:
@@ -24,17 +24,17 @@ def tree_to_repr(tree):
     elif(tree.data == "var"):
         return VarExpression(tree.children[0].value)
     elif(tree.data == "if_exp"):
-        return IfExpression([tree_to_repr(c) for c in tree.children])
+        return IfExpression([tree_to_repr(c, dependent_info) for c in tree.children])
     elif(tree.data == "comp_exp"):
-        return CompareExpression(tree_to_repr(tree.children[0]), tree.children[1], tree_to_repr(tree.children[2]))
+        return CompareExpression(tree_to_repr(tree.children[0], dependent_info), tree.children[1], tree_to_repr(tree.children[2], dependent_info))
     elif tree.data in ["add_exp", "term_exp"] :
-        return ArithExpression(list(map(tree_to_repr, tree.children)))
+        return ArithExpression(list(map(lambda child: tree_to_repr(child, dependent_info), tree.children)))
     elif tree.data == "factor":
-        return UnaryExpression(tree.children[0].value, tree_to_repr(tree.children[1]))
+        return UnaryExpression(tree.children[0].value, tree_to_repr(tree.children[1], dependent_info))
     elif tree.data == "pow_exp":
-        return PowerExpression(tree_to_repr(tree.children[0]), tree_to_repr(tree.children[1]))
+        return PowerExpression(tree_to_repr(tree.children[0], dependent_info), tree_to_repr(tree.children[1], dependent_info))
     elif tree.data == "funccall":
-        return functions[tree.children[0].value](list(map(tree_to_repr, tree.children[1].children)))
+        return functions[tree.children[0].value](list(map(lambda child: tree_to_repr(child, dependent_info), tree.children[1].children)), dependent_info)
 
 class ConstExpression:
     def __init__(self, value):
@@ -345,7 +345,7 @@ class FrutexParser():
       expression = expression.text
     
     parsed_expression = self.parse(expression)
-    repr = tree_to_repr(parsed_expression)
+    repr = tree_to_repr(parsed_expression, (cell, attrib))
     return repr.eval(cell, attrib, config, cell_dict)
 
 class FrutexExpression():
@@ -482,7 +482,7 @@ class FuncExpression (FrutexExpression):
     self.args = args
 
 class ArgsFuncExpression (FuncExpression):
-  def __init__(self, args):
+  def __init__(self, args, dependent_info):
     super().__init__(args)
 
   def eval(self, cell, attrib, config, cell_dict): 
@@ -492,52 +492,52 @@ class ArgsFuncExpression (FuncExpression):
     pass
 
 class MinExpression (ArgsFuncExpression):
-  def __init__(self, args):
-    super().__init__(args)
+  def __init__(self, args, dependent_info):
+    super().__init__(args, dependent_info)
     
   def func(self):
     return min
 
 class MaxExpression (ArgsFuncExpression):
-  def __init__(self, args):
-    super().__init__(args)
+  def __init__(self, args, dependent_info):
+    super().__init__(args, dependent_info)
     
   def func(self):
     return max
   
 class CellExpression (FuncExpression):
-  def __init__(self, args):
+  def __init__(self, args, dependent_info):
     if type(args) != list or len(args) != 2:
       raise FXException("Illegal arguments to cell(): " + str(args))
     
-    super().__init__(args)
+    super().__init__(args, dependent_info)
     
   def eval(self, cell, attrib, config, cell_dict):
     return cell_dict.get((self.args[0].eval(cell, attrib, config, cell_dict).value, self.args[1].eval(cell, attrib, config, cell_dict).value))
   
   
 class GetContentExpression (FuncExpression):
-  def __init__(self, args):
+  def __init__(self, args, dependent_info):
     if type(args) != list or len(args) != 1:
       raise FXException("Illegal arguments to getContent(): " + str(args))
     
-    super().__init__(args)
+    super().__init__(args, dependent_info)
     
   def eval(self, cell, attrib, config, cell_dict):
-    if self.args[0].eval(cell, attrib, config, cell_dict) == None:
+    if self.args[0].eval(cell, attrib, config, cell_dict) is None:
       return None
       
     return self.args[0].eval(cell, attrib, config, cell_dict).get_expression_result("content", config, cell_dict)
 
 class GetColorExpression (FuncExpression):
-  def __init__(self, args):
+  def __init__(self, args, dependent_info):
     if type(args) != list or len(args) != 1:
       raise FXException("Illegal arguments to getColor(): " + str(args))
     
-    super().__init__(args)
+    super().__init__(args, dependent_info)
     
   def eval(self, cell, attrib, config, cell_dict):
-    if self.args[0] == None:
+    if self.args[0] is None:
       return None
     
     return self.args[0].eval(cell, attrib, config, cell_dict).get_expression_result("color", config, cell_dict)

@@ -1,1 +1,1 @@
-default_color = 555
+default_color = 240
