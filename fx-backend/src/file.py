@@ -66,3 +66,33 @@ class File:
             
             for coordinate in coordinates:
                 self.expressions[cell.expression.text] = self.expressions.get(cell.expression.text, set()) | set(coordinate)
+
+    def compact(self):
+        exp_to_compact_ranges = {}
+        positions_done = {}
+        for expression, coordinates in self.expressions.items():
+            exp_to_compact_ranges[expression] = set()
+            s = exp_to_compact_ranges[expression]
+            for row, col in coordinates:
+                if positions_done.get((row,col), False):
+                    continue
+
+                longest = None
+                best_length = 0
+
+                old_ranges = [CellRange((row,row+1),(col,col+1))]
+                print([(new_range.rows, new_range.cols) for new_range in old_ranges])
+                while(len(old_ranges) > 0):
+                    new_ranges = [CellRange((current_range.rows[0] + step2[0], current_range.rows[1] + step2[1]), (current_range.cols[0] + step1[0], current_range.cols[1] + step1[1])) for step2 in [(0,1),(-1,0),(0,0)] for step1 in [(-1,0),(0,1),(0,0)] if step1 != step2 or step1 != (0,0) for current_range in old_ranges]
+                    #print([(new_range.rows, new_range.cols) for new_range in new_ranges])
+                    new_ranges = list(filter(lambda x: sum([(not coord in coordinates) or positions_done.get(coord, False) for coord in x.get_coordinates()]) == 0, new_ranges))
+                    #print([(new_range.rows, new_range.cols) for new_range in new_ranges])
+                    largest = max([old.size() for old in old_ranges])
+                    if(largest > best_length):
+                        longest = list(filter(lambda x: x.size() == largest, old_ranges))[0]
+                    if(len(new_ranges) == 0):                        
+                        s.add(longest)
+                        for pos in longest.get_coordinates():
+                            positions_done[pos] = True
+                    old_ranges = new_ranges
+        return exp_to_compact_ranges
