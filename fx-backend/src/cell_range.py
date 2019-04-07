@@ -18,4 +18,3 @@ class CellRange:
     def get_coordinates(self):
         return [(r, c) for c in range(self.cols[0], self.cols[1])
                        for r in range(self.rows[0], self.rows[1])]
-        
