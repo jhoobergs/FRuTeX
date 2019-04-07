@@ -47,7 +47,11 @@ class Cell:
         if e is not None:
             return e
         else:
-            expr_result = frutex_parser.FrutexParser().eval(self, attrib, config, cell_dict)
+            if self.expressions.get(attrib) is None:
+                expr_result = config.get_default(attrib)
+            else:
+                expr_result = frutex_parser.FrutexParser().eval(self, attrib, config, cell_dict)
+                
             self.evaluated_expressions[attrib] = expr_result
             
             return expr_result
