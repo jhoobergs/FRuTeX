@@ -478,8 +478,9 @@ class PowerExpression (FrutexExpression):
         return self.elem1.eval(cell, attrib, config, cell_dict) ** self.elem2.eval(cell, attrib, config, cell_dict)
 
 class FuncExpression (FrutexExpression):
-  def __init__(self, args):
+  def __init__(self, args, dependent_info):
     self.args = args
+    self.dependent_info = dependent_info
 
 class ArgsFuncExpression (FuncExpression):
   def __init__(self, args, dependent_info):

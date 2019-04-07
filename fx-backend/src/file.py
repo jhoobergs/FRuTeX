@@ -60,13 +60,13 @@ class File:
         for statement in self.statements:
             coordinates = [coordinates for cell_range in statement.cell_ranges for coordinates in cell_range.get_coordinates() if coordinates in self.expressions]
             for coordinate in coordinates:
-                self.expressions[cell_dict[coordinate].expression.text].discard(coordinates)
+                self.expressions[cell_dict[coordinate].expressions[statement.attrib].text].discard(coordinates)
            
             statement.apply(cell_dict)
             
             coordinates = [coordinates for cell_range in statement.cell_ranges for coordinates in cell_range.get_coordinates()]
             for coordinate in coordinates:
-                self.expressions[cell_dict[coordinate].expression.text] = self.expressions.get(cell_dict[coordinate].expression.text, set()) | set([coordinate])
+                self.expressions[cell_dict[coordinate].expressions[statement.attrib].text] = self.expressions.get(cell_dict[coordinate].expressions[statement.attrib].text, set()) | set([coordinate])
 
     def compact(self):
         exp_to_compact_ranges = {}

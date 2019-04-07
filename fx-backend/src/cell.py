@@ -17,7 +17,7 @@ class Cell:
     def apply_expression(self, attrib, expression):
         self.expressions[attrib] = expression
         self.evaluated_expressions[attrib] = None
-        for c, a in self.dependent_of.get(attrib):
+        for c, a in self.dependent_of.get(attrib, set()):
           c.dependents.get(a, set()).discard((self, attrib))
           
     def refresh(self, attrib, config, cell_dict):
