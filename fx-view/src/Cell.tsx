@@ -35,9 +35,9 @@ class Cell extends React.Component<{key: string, value: string, color: string}, 
   
     render() {
       return (
-        <td>
+        <button>
             <input type="text" value={this.state.value} style={{backgroundColor: this.state.color}} onChange={(event) =>this.handleValueChange(event.target.value)} />
-        </td>
+        </button>
       );
     }
   }
