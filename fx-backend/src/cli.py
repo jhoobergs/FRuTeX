@@ -13,3 +13,5 @@ while True:
         print(p.generate_json())
     if splitted[0] == "update":
         print(p.update_expression((int(splitted[1]), int(splitted[2])), splitted[3], " ".join(splitted[4:])))
+    if splitted[0] == "clear":
+        print(p.clear_cell((int(splitted[1]), int(splitted[2]))))

@@ -560,7 +560,7 @@ class ArgsFuncExpression (FuncExpression):
     super().__init__(args, dependent_info)
 
   def eval(self, cell, attrib, config, cell_dict): 
-    return self.func()(self.args)
+    return self.func()([f.eval(cell, attrib, config, cell_dict) for f in self.args])
   
   def func(self):
     pass

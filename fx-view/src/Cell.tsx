@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import './Cell.css';
 
-export const bgColor = { Default: "#81b71a",
+export const bgColor = { Default: "#D3D3D3",
                     Blue: "#00B1E1",
                     Cyan: "#37BC9B",
                     Green: "#8CC152",
